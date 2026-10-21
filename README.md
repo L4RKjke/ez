@@ -1,2 +1,6 @@
-# ez
-VTX tools
+# ezVTX
+
+## О проекте
+
+WIP
+
