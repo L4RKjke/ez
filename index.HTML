@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>ezvtx — конфигурация видеопередатчика</title>
+  <link rel="stylesheet" href="styles.css">
+  
+  </head>
+
+<body>
+  <header class="header container">
+    <a class="brand" href="./" aria-label="ezvtx — главная">
+      <span class="brand-mark" aria-hidden="true">≋</span>
+      <span class="brand-name">ez<span>vtx</span></span>
+    </a>
+
+    <span class="author">автор <strong>l4</strong></span>
+  </header>
+
+  <main class="container">
+    <div class="intro">
+      <h1>Твой VTX. Твои настройки.</h1>
+      <p class="muted">Конфигурация видеопередатчика для Betaflight</p>
+    </div>
+
+    <!-- Радиокнопки управляют вкладками только через CSS. -->
+    <input
+      class="visually-hidden"
+      type="radio"
+      name="page"
+      id="tab-catalog"
+      aria-controls="catalog"
+    >
+    <input
+      class="visually-hidden"
+      type="radio"
+      name="page"
+      id="tab-config"
+      aria-controls="configuration"
+      checked
+    >
+
+    <nav class="tabs" aria-label="Разделы сайта">
+      <label for="tab-catalog">Каталог</label>
+      <label for="tab-config">Конфигурация</label>
+    </nav>
+
+    <!-- Здесь позднее появятся карточки видеопередатчиков. -->
+    <section
+      id="catalog"
+      class="tab-panel catalog-panel"
+      aria-label="Каталог видеопередатчиков"
+    ></section>
+
+    <section
+      id="configuration"
+	        class="tab-panel"
+      aria-label="Конфигурация видеопередатчика"
+    >
+      <form class="config-form">
+
+        <!-- Блок 1: выбор передатчика -->
+        <section class="card" aria-labelledby="selection-title">
+          <div class="card-heading">
+            <div class="heading-title">
+              <span class="step">01</span>
+              <h2 id="selection-title">Выбор передатчика</h2>
+            </div>
+            <span class="badge">VTX SETUP</span>
+          </div>
+
+          <div class="selection-grid">
+            <div class="field">
+              <label for="vtx-model">Модель видеопередатчика</label>
+              <select id="vtx-model" name="vtx">
+                <option value="" selected>Не выбран</option>
+                <option value="sa">Демо VTX — SmartAudio</option>
+                <option value="tramp">Демо VTX — IRC Tramp</option>
+              </select>
+            </div>
+
+            <p class="selection-note">
+              Выберите передатчик, чтобы открыть параметры подключения.
+              Демонстрационные модели используются только для просмотра интерфейса.
+            </p>
+          </div>
+        </section>
+
+        <!-- Блок 2: появляется после выбора модели -->
+        <section class="card transmitter-card" aria-labelledby="device-title">
+          <div class="card-heading">
+            <div class="heading-title">
+              <span class="step">02</span>
+              <h2 id="device-title">Передатчик и подключение</h2>
+            </div>
+            <span class="badge">Демонстрационные данные</span>
+          </div>
+
+          <div class="device-layout">
+            <div class="device-preview">
+              <!-- Замените заглушку фотографией выбранной модели. -->
+              <figure class="device-image">
+                <div>
+                  <svg viewBox="0 0 100 78" fill="none" aria-hidden="true">
+                    <rect
+                      x="18" y="22" width="64" height="46" rx="7"
+                      stroke="currentColor" stroke-width="2"
+                    />
+                    <rect
+                      x="30" y="33" width="25" height="23" rx="3"
+                      fill="currentColor" fill-opacity=".15"
+                      stroke="currentColor"
+                    />
+                    <path
+                      d="M68 22V8M62 8h12M63 35h9M63 43h9M63 51h9"
+                      stroke="#ff942f" stroke-width="3"
+                      stroke-linecap="round"
+                    />
+                    <circle cx="24" cy="28" r="2" fill="currentColor"/>
+                    <circle cx="76" cy="62" r="2" fill="currentColor"/>
+                  </svg>
+                  <figcaption>Место для фото передатчика</figcaption>
+                </div>
+              </figure>
+
+              <h3 class="device-name">
+                <span class="model-sa">Демо VTX / SmartAudio</span>
+                <span class="model-tramp">Демо VTX / IRC Tramp</span>
+              </h3>
+
+              <dl class="specs">
+                <div>
+                  <dt>Протокол</dt>
+                  <dd>
+                    <span class="model-sa">SmartAudio</span>
+                    <span class="model-tramp">IRC Tramp</span>
+                  </dd>
+                </div>
+                <div>
+                  <dt>Мощность</dt>
+                  <dd>25 / 100 / 400 / 800 мВт</dd>
+                </div>
+                <div>
+                  <dt>Диапазоны</dt>
+                  <dd>5.8 ГГц · A / B / E / F / R</dd>
+                </div>
+                <div>
+                  <dt>Каналы</dt>
+                  <dd>40 · по 8 на Band</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="settings-grid">
+              <div class="field full-width">
+                <span class="field-label" id="protocol-label">
+                  Протокол подключения
+                </span>
+                <div class="readonly-field" aria-labelledby="protocol-label">
+                  <span>
+                    <span class="model-sa">SmartAudio</span>
+                    <span class="model-tramp">IRC Tramp</span>
+                  </span>
+                  <span class="auto-label">AUTO</span>
+                </div>
+              </div>
+
+              <div class="field full-width">
+                <label for="uart">UART</label>
+                <select id="uart" name="uart">
+                  <option value="1">UART 1</option>
+                  <option value="2">UART 2</option>
+                  <option value="3">UART 3</option>
+                  <option value="4">UART 4</option>
+                  <option value="5">UART 5</option>
+                  <option value="6">UART 6</option>
+                  <option value="7">UART 7</option>
+                  <option value="8">UART 8</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="band">Band</label>
+                <select id="band" name="band">
+                  <option value="A">A · Boscam A</option>
+                  <option value="B">B · Boscam B</option>
+                  <option value="E">E · Boscam E</option>
+                  <option value="F">F · FatShark</option>
+                  <option value="R" selected>R · Raceband</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="channel">Канал</label>
+                <select id="channel" name="channel">
+                  <option value="1">CH 1</option>
+                  <option value="2">CH 2</option>
+                  <option value="3">CH 3</option>
+                  <option value="4">CH 4</option>
+                  <option value="5">CH 5</option>
+                  <option value="6">CH 6</option>
+                  <option value="7">CH 7</option>
+                  <option value="8">CH 8</option>
+                </select>
+              </div>
+
+              <label class="checkbox-field full-width" for="enable-rules">
+                <input type="checkbox" id="enable-rules" name="enable_rules">
+                <span>
+                  <strong>Добавить VTX-правила</strong>
+                  <small>Настройка переключения мощности и каналов</small>
+                </span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Блок 3: правила -->
+        <section class="card rules-card" aria-labelledby="rules-title">
+          <div class="card-heading">
+            <div class="heading-title">
+              <span class="step">03</span>
+              <h2 id="rules-title">VTX-правила</h2>
+            </div>
+
+            <a
+              href="#lua-modal"
+              id="lua-open"
+              class="button"
+              aria-haspopup="dialog"
+            >
+              <span aria-hidden="true">&lt;/&gt;</span>
+              <code>.lua</code>
+            </a>
+          </div>
+
+          <div class="rules-layout">
+
+            <!-- Мощности -->
+            <div class="rule-group">
+              <h3>Настройка мощности</h3>
+
+              <div class="field count-field">
+                <label for="power-count">Количество правил</label>
+                <select
+                  class="rule-count"
+                  id="power-count"
+                  name="power_rule_count"
+                >
+                  <option value="1">1 правило</option>
+                  <option value="2">2 правила</option>
+                  <option value="3" selected>3 правила</option>
+                  <option value="4">4 правила</option>
+                </select>
+              </div>
+
+              <div class="rule-list">
+                <div class="rule-row">
+                  <span class="rule-index">01</span>
+                  <div class="field">
+                    <label for="power-1">Мощность</label>
+                    <select id="power-1" name="power_1">
+                      <option selected>25 мВт</option>
+                      <option>100 мВт</option>
+                      <option>400 мВт</option>
+                      <option>800 мВт</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="pwm-1">ШИМ, мкс</label>
+                    <select id="pwm-1" name="pwm_1">
+                      <option selected>900–1300</option>
+                      <option>1300–1700</option>
+                      <option>1700–2100</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="rule-row">
+                  <span class="rule-index">02</span>
+                  <div class="field">
+                    <label for="power-2">Мощность</label>
+                    <select id="power-2" name="power_2">
+                      <option>25 мВт</option>
+                      <option selected>100 мВт</option>
+                      <option>400 мВт</option>
+                      <option>800 мВт</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="pwm-2">ШИМ, мкс</label>
+                    <select id="pwm-2" name="pwm_2">
+                      <option>900–1300</option>
+                      <option selected>1300–1700</option>
+                      <option>1700–2100</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="rule-row">
+                  <span class="rule-index">03</span>
+                  <div class="field">
+                    <label for="power-3">Мощность</label>
+                    <select id="power-3" name="power_3">
+                      <option>25 мВт</option>
+                      <option>100 мВт</option>
+                      <option selected>400 мВт</option>
+                      <option>800 мВт</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="pwm-3">ШИМ, мкс</label>
+                    <select id="pwm-3" name="pwm_3">
+                      <option>900–1300</option>
+                      <option>1300–1700</option>
+                      <option selected>1700–2100</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="rule-row">
+                  <span class="rule-index">04</span>
+                  <div class="field">
+                    <label for="power-4">Мощность</label>
+                    <select id="power-4" name="power_4">
+                      <option>25 мВт</option>
+                      <option>100 мВт</option>
+                      <option>400 мВт</option>
+                      <option selected>800 мВт</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="pwm-4">ШИМ, мкс</label>
+                    <select id="pwm-4" name="pwm_4">
+                      <option value="" selected>Не задан</option>
+                      <option>900–1300</option>
+                      <option>1300–1700</option>
+                      <option>1700–2100</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <p class="hint">
+                Диапазоны ШИМ показаны для макета. Проверка пересечений
+                и назначение AUX будут добавлены с логикой правил.
+              </p>
+            </div>
+
+            <!-- Каналы -->
+            <div class="rule-group">
+              <h3>Настройка каналов</h3>
+
+              <div class="field count-field">
+                <label for="channel-count">Количество правил</label>
+                <select
+                  class="rule-count"
+                  id="channel-count"
+                  name="channel_rule_count"
+                >
+                  <option value="1">1 правило</option>
+                  <option value="2" selected>2 правила</option>
+                  <option value="3">3 правила</option>
+                  <option value="4">4 правила</option>
+                </select>
+              </div>
+
+              <div class="rule-list">
+                <div class="rule-row">
+                  <span class="rule-index">01</span>
+                  <div class="field">
+                    <label for="rule-band-1">Band</label>
+                    <select id="rule-band-1" name="rule_band_1">
+                      <option>A</option>
+                      <option>B</option>
+                      <option>E</option>
+                      <option>F</option>
+                      <option selected>R</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="rule-channel-1">Канал</label>
+                    <select id="rule-channel-1" name="rule_channel_1">
+                      <option>CH 1</option>
+                      <option>CH 2</option>
+                      <option>CH 3</option>
+                      <option>CH 4</option>
+                      <option>CH 5</option>
+                      <option>CH 6</option>
+                      <option>CH 7</option>
+                      <option>CH 8</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="rule-row">
+                  <span class="rule-index">02</span>
+                  <div class="field">
+                    <label for="rule-band-2">Band</label>
+                    <select id="rule-band-2" name="rule_band_2">
+                      <option>A</option>
+                      <option>B</option>
+                      <option>E</option>
+                      <option>F</option>
+                      <option selected>R</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="rule-channel-2">Канал</label>
+                    <select id="rule-channel-2" name="rule_channel_2">
+                      <option>CH 1</option>
+                      <option selected>CH 2</option>
+                      <option>CH 3</option>
+                      <option>CH 4</option>
+                      <option>CH 5</option>
+                      <option>CH 6</option>
+                      <option>CH 7</option>
+                      <option>CH 8</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="rule-row">
+                  <span class="rule-index">03</span>
+                  <div class="field">
+                    <label for="rule-band-3">Band</label>
+                    <select id="rule-band-3" name="rule_band_3">
+                      <option>A</option>
+                      <option>B</option>
+                      <option>E</option>
+                      <option>F</option>
+                      <option selected>R</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="rule-channel-3">Канал</label>
+                    <select id="rule-channel-3" name="rule_channel_3">
+                      <option>CH 1</option>
+                      <option>CH 2</option>
+                      <option selected>CH 3</option>
+                      <option>CH 4</option>
+                      <option>CH 5</option>
+                      <option>CH 6</option>
+                      <option>CH 7</option>
+                      <option>CH 8</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="rule-row">
+                  <span class="rule-index">04</span>
+                  <div class="field">
+                    <label for="rule-band-4">Band</label>
+                    <select id="rule-band-4" name="rule_band_4">
+                      <option>A</option>
+                      <option>B</option>
+                      <option>E</option>
+                      <option>F</option>
+                      <option selected>R</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="rule-channel-4">Канал</label>
+                    <select id="rule-channel-4" name="rule_channel_4">
+                      <option>CH 1</option>
+                      <option>CH 2</option>
+                      <option>CH 3</option>
+                      <option selected>CH 4</option>
+                      <option>CH 5</option>
+                      <option>CH 6</option>
+                      <option>CH 7</option>
+                      <option>CH 8</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <p class="hint">
+                Доступные Band и каналы будут зависеть от таблицы
+                выбранного видеопередатчика.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Блок 4: место для будущего генератора CLI -->
+        <section class="card" aria-labelledby="cli-title">
+          <div class="card-heading">
+            <div class="heading-title">
+              <span class="step">04</span>
+              <h2 id="cli-title">CLI-результат</h2>
+            </div>
+            <span class="badge">Предпросмотр · генератор не подключён</span>
+          </div>
+
+          <div class="terminal">
+            <div class="terminal-bar">
+              <span class="terminal-dots" aria-hidden="true">
+                <i></i><i></i><i></i>
+              </span>
+              <span>Betaflight / CLI</span>
+            </div>
+
+            <textarea
+              id="cli-output"
+              class="cli-output"
+              aria-label="Результат генерации CLI"
+              aria-describedby="cli-hint"
+              readonly
+              spellcheck="false"
+            ># ezvtx / автор l4
+# Генератор CLI пока не подключён.
+#
+# Здесь будут собраны:
+# — настройки UART и протокола;
+# — таблица VTX выбранной модели;
+# — Band и канал;
+# — уровни мощности;
+# — все активные VTX-правила.
+#
+# Это заглушка, а не готовая конфигурация.</textarea>
+          </div>
+
+          <p class="hint" id="cli-hint">
+            После подключения JS результат будет обновляться по настройкам
+            выше с учётом модели VTX и версии Betaflight.
+          </p>
+        </section>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer container">
+    <span>ezvtx · автор l4</span>
+    <span>VTX configuration interface</span>
+  </footer>
+
+  <!-- Пустое окно .lua. Контент будет добавлен позднее. -->
+  <section
+    id="lua-modal"
+    class="modal"
+    role="dialog"
+    aria-labelledby="lua-title"
+  >
+    <a
+      class="modal-backdrop"
+      href="#lua-open"
+      aria-label="Закрыть окно .lua"
+      tabindex="-1"
+    ></a>
+
+    <div class="modal-window">
+      <header class="modal-header">
+        <h2 id="lua-title">&lt;/&gt; .lua</h2>
+        <a class="modal-close" href="#lua-open" aria-label="Закрыть">×</a>
+      </header>
+      <div class="modal-body"></div>
+    </div>
+  </section>
+</body>
+</html>
