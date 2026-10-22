@@ -17,18 +17,6 @@ const state = {
   powerRules: [],
   channelRules: [],
 
-	auxGroups: {
-	  power: {
-		mode: "individual",
-		aux: 1
-	  },
-	  channel: {
-		mode: "individual",
-		aux: 1
-	  }
-	},
-
-
   template: "",
   templateRevision: 0,
 
@@ -451,91 +439,25 @@ function createSelect(options, value, onChange) {
   return select;
 }
 
-function getAuxOptions() {
-  return Array.from({ length: AUX_COUNT }, (_, index) => ({
-    value: index + 1,
-    label: `AUX${index + 1} · CH${index + 5}`
-  }));
-}
-
-function getEffectiveAux(rule) {
-  const group = state.auxGroups[rule.kind];
-
-  return group.mode === "shared"
-    ? group.aux
-    : rule.aux;
-}
-
-function bindAuxGroups() {
-  for (const kind of ["power", "channel"]) {
-    const group = state.auxGroups[kind];
-
-    const modeSelect = $(`${kind}-aux-mode`);
-    const auxSelect = $(`${kind}-shared-aux`);
-    const auxField = $(`${kind}-shared-aux-field`);
-
-    fillSelect(auxSelect, getAuxOptions(), group.aux);
-
-    modeSelect.value = group.mode;
-    auxField.hidden = group.mode !== "shared";
-
-    modeSelect.addEventListener("change", () => {
-      group.mode = modeSelect.value;
-      auxField.hidden = group.mode !== "shared";
-
-      // Обновляем поля, но не перезаписываем индивидуальные AUX.
-      renderRules();
-      updateOutputs();
-    });
-
-    auxSelect.addEventListener("change", () => {
-      group.aux = Number(auxSelect.value);
-
-      renderRules();
-      updateOutputs();
-    });
-  }
-}
-
-
 function renderRule(rule, index) {
-  const group = state.auxGroups[rule.kind];
-  const sharedAux = group.mode === "shared";
-
-  const card = element(
-    "div",
-    `rule-card ${rule.kind}-rule`
-  );
-
-  card.classList.toggle("shared-aux-rule", sharedAux);
-
+  const card = element("div", "rule-card");
   const fields = element("div", "rule-fields");
 
-  card.append(
-    element("div", "rule-number", `ПРАВИЛО ${index + 1}`)
-  );
+  card.append(element("div", "rule-number", `ПРАВИЛО ${index + 1}`));
 
   const aux = createSelect(
-    getAuxOptions(),
-    getEffectiveAux(rule),
+    Array.from({ length: AUX_COUNT }, (_, i) => ({
+      value: i + 1,
+      label: `AUX${i + 1} · CH${i + 5}`
+    })),
+    rule.aux,
     value => {
       rule.aux = Number(value);
       updateOutputs();
     }
   );
 
-  aux.disabled = sharedAux;
-
-  aux.title = sharedAux
-    ? "Управляется общим AUX группы. Для отдельного назначения выберите «Для каждого правила»."
-    : "Индивидуальный AUX этого правила.";
-
-  fields.append(
-    labeledControl(
-      sharedAux ? "AUX · общий" : "AUX / CH",
-      aux
-    )
-  );
+  fields.append(labeledControl("AUX / канал приёмника", aux));
 
   if (rule.kind === "power") {
     const profile = currentProfile();
@@ -566,30 +488,19 @@ function renderRule(rule, index) {
       });
     }
 
-    fields.append(
-      labeledControl("Мощность / уровень", power)
-    );
+    fields.append(labeledControl("Мощность / уровень", power));
   } else {
-    const band = createSelect(
-      bandOptions(),
-      rule.band,
-      value => {
-        rule.band = Number(value);
+    const band = createSelect(bandOptions(), rule.band, value => {
+      rule.band = Number(value);
+      rule.channel = Math.min(
+        rule.channel,
+        getBands()[rule.band - 1].frequencies.length
+      );
 
-        rule.channel = Math.min(
-          rule.channel,
-          getBands()[rule.band - 1].frequencies.length
-        );
-
-        fillSelect(
-          channel,
-          channelOptions(rule.band),
-          rule.channel
-        );
-
-        updateOutputs();
-      }
-    );
+      // Обновляем только зависимый список, не пересоздавая поле с фокусом.
+      fillSelect(channel, channelOptions(rule.band), rule.channel);
+      updateOutputs();
+    });
 
     const channel = createSelect(
       channelOptions(rule.band),
@@ -613,7 +524,6 @@ function renderRule(rule, index) {
 
   return card;
 }
-
 
 function renderRules() {
   for (const [kind, containerId] of [
@@ -641,13 +551,7 @@ function activeRules() {
     return [];
   }
 
-  return [
-    ...state.powerRules,
-    ...state.channelRules
-  ].map(rule => ({
-    ...rule,
-    aux: getEffectiveAux(rule)
-  }));
+  return [...state.powerRules, ...state.channelRules];
 }
 
 function validateRules(rules) {
@@ -848,7 +752,6 @@ function bindEvents() {
 
   bindRuleCount("power-count", "power");
   bindRuleCount("channel-count", "channel");
-  bindAuxGroups();
 
   $("copy-cli").addEventListener("click", () => {
     copyText($("cli-output").value);
