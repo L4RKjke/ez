@@ -3,548 +3,341 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Каталог VTX</title>
+  <meta name="theme-color" content="#091525">
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+  <title>ezvtx — конфигуратор VTX</title>
 
-    body {
-      margin: 0;
-      background: #f1f5f9;
-      color: #1e293b;
-      font-family: Arial, sans-serif;
-      line-height: 1.5;
-    }
-
-    main {
-      max-width: 1100px;
-      margin: auto;
-      padding: 28px 16px;
-    }
-
-    h1 {
-      margin: 0 0 8px;
-    }
-
-    h2 {
-      margin: 0 0 20px;
-      overflow-wrap: anywhere;
-    }
-
-    h3 {
-      margin: 24px 0 12px;
-    }
-
-    h4 {
-      margin: 18px 0 10px;
-    }
-
-    .muted {
-      color: #64748b;
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 12px;
-      margin: 24px 0;
-    }
-
-    button,
-    .file-button {
-      display: inline-block;
-      padding: 11px 16px;
-      border: 0;
-      border-radius: 8px;
-      background: #2563eb;
-      color: white;
-      font: inherit;
-      cursor: pointer;
-    }
-
-    button:hover,
-    .file-button:hover {
-      background: #1d4ed8;
-    }
-
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .file-button:focus-within {
-      outline: 3px solid #93c5fd;
-      outline-offset: 3px;
-    }
-
-    .file-input {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      overflow: hidden;
-      clip-path: inset(50%);
-    }
-
-    .card {
-      margin-bottom: 24px;
-      padding: 24px;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      background: white;
-      box-shadow: 0 4px 16px rgb(15 23 42 / 5%);
-    }
-
-    .table-scroll {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-
-    th,
-    td {
-      padding: 10px 12px;
-      border-bottom: 1px solid #e2e8f0;
-      text-align: left;
-    }
-
-    thead {
-      background: #f8fafc;
-    }
-
-    tbody tr:last-child > * {
-      border-bottom: none;
-    }
-
-    .specs {
-      table-layout: fixed;
-      overflow-wrap: anywhere;
-    }
-
-    .specs th {
-      width: 42%;
-      color: #475569;
-      font-weight: normal;
-    }
-
-    .frequencies th,
-    .frequencies td {
-      white-space: nowrap;
-    }
-
-    .badge {
-      display: inline-block;
-      margin-left: 8px;
-      padding: 2px 8px;
-      border-radius: 12px;
-      background: #dbeafe;
-      color: #1d4ed8;
-      font-size: 12px;
-      font-weight: normal;
-    }
-
-    #errors {
-      margin-bottom: 20px;
-      color: #b91c1c;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-
-    @media (max-width: 600px) {
-      .card {
-        padding: 16px;
-      }
-
-      th,
-      td {
-        padding: 8px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script type="module" src="../js/app.js"></script>
 </head>
 
 <body>
-  <main>
-    <header>
-      <h1>Каталог VTX</h1>
-      <p id="summary" class="muted" aria-live="polite">
-  Загрузка каталога…
-</p>
+  <div class="background-glow" aria-hidden="true"></div>
 
-    </header>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./index.html" aria-label="ezvtx — главная">
+        ez<span>vtx</span>
+      </a>
 
-    <div class="controls" data-editor>
-  <button id="downloadButton" type="button" disabled>
-    Скачать HTML
-  </button>
-</div>
+      <div class="header-caption">
+        <span>VIDEO TRANSMITTER TOOLKIT</span>
+        <span class="author">by <strong>l4</strong></span>
+      </div>
+    </div>
+  </header>
 
+  <main class="container">
+    <section class="intro">
+      <div>
+        <div class="eyebrow">VTX CONTROL CENTER</div>
+        <h1>Настрой свой <span>видеопередатчик</span></h1>
+        <p>Каталог оборудования, AUX-правила и готовые команды CLI.</p>
+      </div>
 
-    <div id="errors" data-editor role="alert"></div>
+      <span class="status-pill">
+        <span class="status-dot"></span>
+        Локальная обработка
+      </span>
+    </section>
 
-    <section id="catalog" aria-label="Передатчики"></section>
+    <nav class="tabs" role="tablist" aria-label="Разделы">
+      <button
+        id="catalog-tab"
+        class="tab active"
+        type="button"
+        role="tab"
+        aria-selected="true"
+        aria-controls="catalog-panel"
+        data-tab="catalog"
+      >
+        Каталог
+        <span id="catalog-count" class="counter">0</span>
+      </button>
+
+      <button
+        id="config-tab"
+        class="tab"
+        type="button"
+        role="tab"
+        aria-selected="false"
+        aria-controls="config-panel"
+        tabindex="-1"
+        data-tab="config"
+      >
+        Конфигурация
+      </button>
+    </nav>
+
+    <!-- Каталог -->
+    <section
+      id="catalog-panel"
+      role="tabpanel"
+      aria-labelledby="catalog-tab"
+    >
+      <div class="panel catalog-toolbar">
+        <label class="field search-field">
+          <span>Поиск по названию</span>
+          <input
+            id="catalog-search"
+            type="search"
+            placeholder="Например, ReadyToSky"
+            autocomplete="off"
+          >
+        </label>
+
+        <span id="catalog-status" class="muted" role="status">
+          Загрузка каталога…
+        </span>
+      </div>
+
+      <div id="catalog-grid" class="catalog-grid"></div>
+
+      <div id="catalog-empty" class="empty-state" hidden>
+        Передатчики не найдены.
+      </div>
+    </section>
+
+    <!-- Конфигурация -->
+    <section
+      id="config-panel"
+      role="tabpanel"
+      aria-labelledby="config-tab"
+      hidden
+    >
+      <div class="configuration-stack">
+
+        <!-- Блок 1 -->
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <div class="eyebrow">ШАГ 01</div>
+              <h2>Выбор передатчика</h2>
+            </div>
+
+            <span class="badge">VTX</span>
+          </div>
+
+          <label class="field">
+            <span>Модель видеопередатчика</span>
+            <select id="device-select">
+              <option value="">Не указан</option>
+            </select>
+          </label>
+
+          <p class="hint">
+            Без выбранной модели доступны только VTX-правила.
+            Мощности в них обозначаются индексами уровней.
+          </p>
+        </section>
+
+        <!-- Блок 2 -->
+        <section id="device-panel" class="panel" hidden>
+          <div class="section-heading">
+            <div>
+              <div class="eyebrow">ШАГ 02</div>
+              <h2>Параметры передатчика</h2>
+            </div>
+
+            <span id="device-protocol-badge" class="badge"></span>
+          </div>
+
+          <div class="device-layout">
+            <div>
+              <div id="device-photo" class="photo-box large-photo"></div>
+
+              <h3 id="device-name"></h3>
+              <dl id="device-description" class="spec-list"></dl>
+            </div>
+
+            <div class="settings-column">
+              <label class="field">
+                <span>Протокол подключения</span>
+                <input id="protocol" readonly placeholder="Не выбран">
+              </label>
+
+              <div class="form-grid">
+                <label class="field">
+                  <span>UART</span>
+                  <select id="uart"></select>
+                </label>
+
+                <label class="field">
+                  <span>Band</span>
+                  <select id="band"></select>
+                </label>
+
+                <label class="field">
+                  <span>Канал</span>
+                  <select id="channel"></select>
+                </label>
+
+                <label class="field">
+                  <span>Частота</span>
+                  <input id="frequency" readonly>
+                </label>
+              </div>
+
+              <label class="checkbox-field">
+                <input id="enable-rules" type="checkbox">
+                <span class="checkbox-indicator" aria-hidden="true"></span>
+                <span>Добавить VTX правила</span>
+              </label>
+
+              <p class="hint">
+                Протокол, диапазоны, каналы и уровни мощности
+                загружаются из конфигурации выбранной модели.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Блок 3 -->
+        <section id="rules-panel" class="panel">
+          <div class="section-heading">
+            <div>
+              <div class="eyebrow">ШАГ 03</div>
+              <h2>VTX правила</h2>
+            </div>
+
+            <button id="lua-button" class="button button-primary" type="button">
+              &lt;/&gt; .lua
+            </button>
+          </div>
+
+          <p class="hint">
+            AUX1 соответствует CH5. ШИМ автоматически распределяется
+            в пределах 900–2100 мкс с шагом 25 мкс.
+          </p>
+
+          <div class="rules-layout">
+            <section class="rule-group">
+              <div class="group-title">
+                <span class="group-icon">P</span>
+                <h3>Управление мощностью</h3>
+              </div>
+
+              <div class="form-grid">
+                <label class="field">
+                  <span>AUX / канал</span>
+                  <select id="power-aux"></select>
+                </label>
+
+                <label class="field">
+                  <span>Количество правил</span>
+                  <input
+                    id="power-count"
+                    type="number"
+                    min="0"
+                    max="8"
+                    step="1"
+                    value="3"
+                    inputmode="numeric"
+                  >
+                </label>
+              </div>
+
+              <div id="power-rules" class="rule-list"></div>
+            </section>
+
+            <section class="rule-group">
+              <div class="group-title">
+                <span class="group-icon">CH</span>
+                <h3>Управление каналами</h3>
+              </div>
+
+              <div class="form-grid">
+                <label class="field">
+                  <span>AUX / канал</span>
+                  <select id="channel-aux"></select>
+                </label>
+
+                <label class="field">
+                  <span>Количество правил</span>
+                  <input
+                    id="channel-count"
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="1"
+                    value="3"
+                    inputmode="numeric"
+                  >
+                </label>
+              </div>
+
+              <div id="channel-rules" class="rule-list"></div>
+            </section>
+          </div>
+
+          <div class="rules-footer">
+            <span id="rules-summary" class="badge"></span>
+            <span class="hint">
+              До 10 правил суммарно. Для мощности — до 8.
+              Для двух групп используются разные AUX.
+            </span>
+          </div>
+        </section>
+
+        <!-- Блок 4 -->
+        <section class="panel cli-panel">
+          <div class="section-heading">
+            <div>
+              <div class="eyebrow">РЕЗУЛЬТАТ</div>
+              <h2>CLI конфигурация</h2>
+            </div>
+
+            <button id="copy-cli" class="button button-secondary" type="button">
+              Скопировать
+            </button>
+          </div>
+
+          <div class="terminal-bar">
+            <div class="terminal-dots" aria-hidden="true">
+              <i></i><i></i><i></i>
+            </div>
+            <span>Betaflight CLI</span>
+            <span id="cli-line-count"></span>
+          </div>
+
+          <textarea
+            id="cli-output"
+            class="cli-output"
+            readonly
+            spellcheck="false"
+            aria-label="Сгенерированные команды Betaflight CLI"
+          ></textarea>
+
+          <p class="hint warning">
+            Проверьте UART и команды перед применением.
+            Назначение UART заменяет его текущую функцию.
+            Команды vtx заменяют существующие VTX-правила.
+            Команда save не добавляется: выполните её вручную после проверки.
+          </p>
+        </section>
+      </div>
+    </section>
   </main>
 
-  <script>
-    const CONFIG_FILE = "vtx конфиг.json";
-    const DESCRIPTION_FILE = "описание.json";
-
-    const folderInput = document.getElementById("folderInput");
-    const downloadButton = document.getElementById("downloadButton");
-    const catalog = document.getElementById("catalog");
-    const summary = document.getElementById("summary");
-    const errors = document.getElementById("errors");
-
-    // Данные из JSON вставляются через textContent, а не innerHTML.
-    function element(tag, text, className) {
-      const node = document.createElement(tag);
-
-      if (text !== undefined) {
-        node.textContent = String(text);
-      }
-
-      if (className) {
-        node.className = className;
-      }
-
-      return node;
-    }
-
-    function isObject(value) {
-      return value !== null &&
-        typeof value === "object" &&
-        !Array.isArray(value);
-    }
-
-
-
-    function validateConfig(config) {
-      if (config.bands !== undefined) {
-        if (!Array.isArray(config.bands)) {
-          throw new Error("Поле bands должно быть массивом");
-        }
-
-        for (const band of config.bands) {
-          if (!isObject(band) || !Array.isArray(band.frequencies)) {
-            throw new Error(
-              "Каждый бэнд должен содержать массив frequencies"
-            );
-          }
-        }
-      }
-
-      if (config.profiles !== undefined) {
-        if (!isObject(config.profiles)) {
-          throw new Error("Поле profiles должно быть объектом");
-        }
-
-        for (const [name, profile] of Object.entries(config.profiles)) {
-          if (
-            !isObject(profile) ||
-            !Array.isArray(profile.powers) ||
-            !profile.powers.every(isObject)
-          ) {
-            throw new Error(
-              `Профиль «${name}» должен содержать массив объектов powers`
-            );
-          }
-        }
-      }
-    }
-
-    function createTable(headers, rows, className) {
-      const wrapper = element("div", undefined, "table-scroll");
-      const table = element("table", undefined, className);
-      const thead = element("thead");
-      const headerRow = element("tr");
-
-      for (const header of headers) {
-        const cell = element("th", header);
-        cell.scope = "col";
-        headerRow.append(cell);
-      }
-
-      thead.append(headerRow);
-
-      const tbody = element("tbody");
-
-      for (const values of rows) {
-        const row = element("tr");
-
-        for (const value of values) {
-          row.append(element("td", value ?? "—"));
-        }
-
-        tbody.append(row);
-      }
-
-      table.append(thead, tbody);
-      wrapper.append(table);
-
-      return wrapper;
-    }
-
-    function renderSpecs(description) {
-      const table = element("table", undefined, "specs");
-      const tbody = element("tbody");
-
-      for (const [key, value] of Object.entries(description)) {
-        if (key === "Название") continue;
-
-        const row = element("tr");
-        const heading = element("th", key);
-        heading.scope = "row";
-
-        row.append(heading, element("td", value ?? "—"));
-        tbody.append(row);
-      }
-
-      if (!tbody.children.length) {
-        return element("p", "Характеристики не указаны.", "muted");
-      }
-
-      table.append(tbody);
-      return table;
-    }
-
-    function renderBands(bands) {
-      if (!bands.length) {
-        return element("p", "Частоты не указаны.", "muted");
-      }
-
-      const channelCount = bands.reduce(
-        (max, band) => Math.max(max, band.frequencies.length),
-        0
-      );
-
-      const headers = [
-        "Бэнд",
-        ...Array.from(
-          { length: channelCount },
-          (_, index) => `CH ${index + 1}`
-        )
-      ];
-
-      const rows = bands.map(band => {
-        const name = band.name ?? "Без названия";
-        const title = band.letter
-          ? `${name} (${band.letter})`
-          : name;
-
-        return [
-          title,
-          ...Array.from(
-            { length: channelCount },
-            (_, index) => band.frequencies[index] ?? "—"
-          )
-        ];
-      });
-
-      return createTable(headers, rows, "frequencies");
-    }
-
-    function renderProfiles(profiles, defaultProtocol) {
-      const container = element("div");
-
-      if (!Object.keys(profiles).length) {
-        container.append(
-          element("p", "Профили мощности не указаны.", "muted")
-        );
-        return container;
-      }
-      for (const [protocol, profile] of Object.entries(profiles)) {
-        const heading = element("h4", protocol);
-
-        if (protocol === defaultProtocol) {
-          heading.append(
-            element("span", "по умолчанию", "badge")
-          );
-        }
-
-        container.append(heading);
-
-        if (!profile.powers.length) {
-          container.append(
-            element("p", "Уровни мощности не указаны.", "muted")
-          );
-          continue;
-        }
-
-        container.append(
-          createTable(
-            ["Обозначение", "Значение протокола", "Мощность, мВт"],
-            profile.powers.map(power => [
-              power.label,
-              power.value,
-              power.mw
-            ])
-          )
-        );
-      }
-
-      return container;
-    }
-
-    function createCard(folderName, description, config) {
-      const card = element("article", undefined, "card");
-
-      card.append(
-        element("h2", description["Название"] || folderName),
-        element("h3", "Характеристики"),
-        renderSpecs(description),
-        element("h3", "Частоты, МГц"),
-        renderBands(config.bands ?? []),
-        element("h3", "Протоколы и мощность"),
-        element(
-          "p",
-          `Протокол по умолчанию: ${
-            config.default_protocol ?? "Не указан"
-          }`,
-          "muted"
-        ),
-        renderProfiles(
-          config.profiles ?? {},
-          config.default_protocol
-        )
-      );
-
-      return card;
-    }
-
-    
-
-    downloadButton.addEventListener("click", () => {
-      // Сохраняем текущий каталог вместе со встроенными стилями.
-      const page = document.documentElement.cloneNode(true);
-
-      // В готовом каталоге редактор и JavaScript уже не нужны.
-      page.querySelectorAll("[data-editor], script").forEach(node => {
-        node.remove();
-      });
-
-      const html = "<!DOCTYPE html>\n" + page.outerHTML;
-      const blob = new Blob([html], {
-        type: "text/html;charset=utf-8"
-      });
-
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-
-      link.href = url;
-      link.download = "vtx-catalog.html";
-      document.body.append(link);
-      link.click();
-      link.remove();
-
-      setTimeout(() => URL.revokeObjectURL(url), 10000);
-    });
-	const CATALOG_URL = new URL("./vtx_catalog/", document.baseURI);
-
-async function fetchJSON(url) {
-  const response = await fetch(url, { cache: "no-store" });
-
-  if (!response.ok) {
-    throw new Error(
-      `Не удалось загрузить ${url.pathname}: HTTP ${response.status}`
-    );
-  }
-
-  const text = (await response.text()).replace(/^\uFEFF/, "");
-  return JSON.parse(text);
-}
-
-function getCatalogFileURL(folderName, fileName) {
-  return new URL(
-    `${encodeURIComponent(folderName)}/${encodeURIComponent(fileName)}`,
-    CATALOG_URL
-  );
-}
-
-async function loadCatalog() {
-  catalog.replaceChildren();
-  errors.textContent = "";
-  downloadButton.disabled = true;
-  summary.textContent = "Загрузка каталога…";
-
-  try {
-    const folders = await fetchJSON(
-      new URL("catalog.json", CATALOG_URL)
-    );
-
-    if (
-      !Array.isArray(folders) ||
-      !folders.every(name =>
-        typeof name === "string" &&
-        name.trim().length > 0 &&
-        name !== "." &&
-        name !== ".." &&
-        !/[\\/]/.test(name)
-      )
-    ) {
-      throw new Error(
-        "catalog.json должен содержать массив названий папок."
-      );
-    }
-
-    const sortedFolders = [...new Set(folders)].sort(
-      (a, b) => a.localeCompare(b, "ru", { numeric: true })
-    );
-
-    const warnings = [];
-    let count = 0;
-
-    for (const folderName of sortedFolders) {
-      try {
-        const [description, config] = await Promise.all([
-          fetchJSON(
-            getCatalogFileURL(folderName, DESCRIPTION_FILE)
-          ),
-          fetchJSON(
-            getCatalogFileURL(folderName, CONFIG_FILE)
-          )
-        ]);
-
-        if (!isObject(description) || !isObject(config)) {
-          throw new Error(
-            "Файлы описания и конфигурации должны содержать JSON-объекты."
-          );
-        }
-
-        validateConfig(config);
-
-        catalog.append(
-          createCard(folderName, description, config)
-        );
-
-        count++;
-      } catch (error) {
-        warnings.push(
-          `Папка «${folderName}»: ${error.message}`
-        );
-      }
-    }
-
-    summary.textContent = `Передатчиков в каталоге: ${count}`;
-    errors.textContent = warnings.join("\n");
-    downloadButton.disabled = count === 0;
-  } catch (error) {
-    summary.textContent = "Не удалось загрузить каталог.";
-
-    errors.textContent = location.protocol === "file:"
-      ? "Откройте страницу через HTTP, например с помощью Live Server в VS Code."
-      : error.message;
-  }
-}
-
-loadCatalog();
-
-  </script>
+  <footer class="container site-footer">
+    <span><strong>ezvtx</strong> · by l4</span>
+    <span>Используйте только разрешённые частоты и мощности.</span>
+  </footer>
+
+  <dialog id="lua-dialog" aria-labelledby="lua-title">
+    <div class="dialog-header">
+      <h2 id="lua-title">LUA</h2>
+      <button
+        id="close-lua"
+        class="icon-button"
+        type="button"
+        aria-label="Закрыть окно"
+      >×</button>
+    </div>
+
+    <div class="lua-empty-body"></div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" hidden></div>
 </body>
 </html>
