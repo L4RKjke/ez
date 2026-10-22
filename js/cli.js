@@ -1,114 +1,69 @@
-export const MAX_RULES = 10;
+const SERIAL_FUNCTION = {
+  "SmartAudio": 2048,
+  "IRC Tramp": 4096
+};
 
-export function pwmRange(index, count) {
-  // 900–2100 мкс = 48 шагов по 25 мкс.
-  const start = 900 + Math.floor(index * 48 / count) * 25;
-  const end = 900 + Math.floor((index + 1) * 48 / count) * 25;
+export function buildCLI(state, device, rules, pwm) {
+  if (pwm.errors.length) {
+    return "";
+  }
 
-  return { start, end };
-}
-
-export function generateCLI(state) {
   const lines = [];
-  const config = state.device?.config;
 
-  if (config) {
-    const channelCount = Math.max(
-      ...config.bands.map(band => band.frequencies.length)
-    );
-
-    // Betaflight:
-    // FUNCTION_VTX_SMARTAUDIO = 2048
-    // FUNCTION_VTX_TRAMP = 8192
-    const serialFunction =
-      config.protocol === "IRC Tramp" ? 8192 : 2048;
+  if (device) {
+    const config = device.config;
+    const profile = config.profiles[state.protocol];
 
     lines.push(
-      "# VTX configuration",
-      `# Protocol: ${config.protocol}`,
-      `# Verify UART${state.uart} mapping before applying`,
+      "# ezvtx — by l4",
+      "# UART number -> serial identifier assumes UART1 = 0.",
+      "# Verify mapping and existing port functions before applying.",
+      `serial ${state.uart - 1} ${SERIAL_FUNCTION[state.protocol]} 115200 57600 0 115200`,
       "",
-      `serial ${state.uart - 1} ${serialFunction} 115200 57600 0 115200`,
-      "",
-      "vtxtable bands 0",
-      `vtxtable channels ${channelCount}`,
-      `vtxtable bands ${config.bands.length}`
+      "# VTX table",
+      `vtxtable bands ${config.bands.length}`,
+      `vtxtable channels ${config.bands[0].frequencies.length}`
     );
 
     config.bands.forEach((band, index) => {
-      const frequencies = Array.from(
-        { length: channelCount },
-        (_, channel) => band.frequencies[channel] ?? 0
-      );
-
       lines.push(
         `vtxtable band ${index + 1} ${band.name} ${band.letter} CUSTOM ` +
-        frequencies.join(" ")
+        band.frequencies.join(" ")
       );
     });
 
     lines.push(
-      `vtxtable powerlevels ${config.powers.length}`,
-      "vtxtable powervalues " +
-        config.powers.map(power => power.value).join(" "),
-      "vtxtable powerlabels " +
-        config.powers.map(power => power.label).join(" "),
+      `vtxtable powerlevels ${profile.powers.length}`,
+      `vtxtable powervalues ${profile.powers.map(p => p.value).join(" ")}`,
+      `vtxtable powerlabels ${profile.powers.map(p => p.label).join(" ")}`,
       "",
+      "# Initial settings",
       `set vtx_band = ${state.band}`,
       `set vtx_channel = ${state.channel}`,
-      `set vtx_freq = ${
-        config.bands[state.band - 1].frequencies[state.channel - 1]
-      }`,
-      "",
-      "# Replace VTX activation rules"
+      "set vtx_power = 1"
     );
   }
 
-  const rules = [];
-
-  if (!config || state.rulesEnabled) {
-    state.powerRules.forEach((rule, index) => {
-      const { start, end } = pwmRange(index, state.powerRules.length);
-
-      rules.push({
-        aux: state.powerAux,
-        band: 0,
-        channel: 0,
-        power: rule.power,
-        start,
-        end
-      });
-    });
-
-    state.channelRules.forEach((rule, index) => {
-      const { start, end } = pwmRange(index, state.channelRules.length);
-
-      rules.push({
-        aux: state.channelAux,
-        band: rule.band,
-        channel: rule.channel,
-        power: 0,
-        start,
-        end
-      });
-    });
-  }
-
-  // Все слоты записываются явно, чтобы старые правила не оставались.
-  for (let index = 0; index < MAX_RULES; index++) {
-    const rule = rules[index];
-
-    if (!rule) {
-      lines.push(`vtx ${index} 0 0 0 0 900 900`);
-      continue;
+  if (rules.length) {
+    if (lines.length) {
+      lines.push("");
     }
 
-    // В CLI AUX индексируется с нуля: AUX1 -> 0.
-    lines.push(
-      `vtx ${index} ${rule.aux - 1} ` +
-      `${rule.band} ${rule.channel} ${rule.power} ` +
-      `${rule.start} ${rule.end}`
-    );
+    lines.push("# VTX Configuration");
+
+    rules.forEach((rule, index) => {
+      const range = pwm.assigned.get(rule.id);
+
+      const band = rule.kind === "channel" ? rule.band : 0;
+      const channel = rule.kind === "channel" ? rule.channel : 0;
+      const power = rule.kind === "power" ? rule.power : 0;
+
+      // Betaflight: AUX1 имеет индекс 0, AUX8 — индекс 7.
+      lines.push(
+        `vtx ${index} ${rule.aux - 1} ${band} ${channel} ${power} ` +
+        `${range.min} ${range.max}`
+      );
+    });
   }
 
   return lines.join("\n");

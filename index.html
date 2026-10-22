@@ -3,331 +3,236 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#091525">
-
+  <meta name="theme-color" content="#081526">
   <title>ezvtx — конфигуратор VTX</title>
-
-  <link rel="stylesheet" href="./css/styles.css">
+  <link rel="stylesheet" href="./css/style.css">
   <script type="module" src="./js/app.js"></script>
-
 </head>
-
 <body>
-  <div class="background-glow" aria-hidden="true"></div>
-
-  <header class="site-header">
+  <header class="header">
     <div class="container header-inner">
-      <a class="brand" href="./index.html" aria-label="ezvtx — главная">
+      <a class="logo" href="./index.html" aria-label="ezvtx — главная">
         ez<span>vtx</span>
       </a>
 
-      <div class="header-caption">
-        <span>VIDEO TRANSMITTER TOOLKIT</span>
-        <span class="author">by <strong>l4</strong></span>
-      </div>
+      <span class="header-description">VTX CONFIGURATOR</span>
+
+      <span class="author">by <strong>l4</strong></span>
     </div>
   </header>
 
   <main class="container">
-    <section class="intro">
-      <div>
-        <div class="eyebrow">VTX CONTROL CENTER</div>
-        <h1>Настрой свой <span>видеопередатчик</span></h1>
-        <p>Каталог оборудования, AUX-правила и готовые команды CLI.</p>
-      </div>
-
-      <span class="status-pill">
-        <span class="status-dot"></span>
-        Локальная обработка
-      </span>
-    </section>
-
-    <nav class="tabs" role="tablist" aria-label="Разделы">
+    <nav class="tabs" role="tablist" aria-label="Разделы сайта">
       <button
         id="catalog-tab"
         class="tab active"
         type="button"
         role="tab"
         aria-selected="true"
-        aria-controls="catalog-panel"
-        data-tab="catalog"
+        aria-controls="catalog-page"
+        data-page="catalog"
       >
         Каталог
-        <span id="catalog-count" class="counter">0</span>
       </button>
 
       <button
-        id="config-tab"
+        id="configuration-tab"
         class="tab"
         type="button"
         role="tab"
         aria-selected="false"
-        aria-controls="config-panel"
+        aria-controls="configuration-page"
         tabindex="-1"
-        data-tab="config"
+        data-page="configuration"
       >
         Конфигурация
       </button>
     </nav>
 
-    <!-- Каталог -->
     <section
-      id="catalog-panel"
+      id="catalog-page"
       role="tabpanel"
       aria-labelledby="catalog-tab"
     >
-      <div class="panel catalog-toolbar">
-        <label class="field search-field">
-          <span>Поиск по названию</span>
-          <input
-            id="catalog-search"
-            type="search"
-            placeholder="Например, ReadyToSky"
-            autocomplete="off"
-          >
-        </label>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">ОБОРУДОВАНИЕ</p>
+          <h1>Каталог передатчиков</h1>
+        </div>
 
-        <span id="catalog-status" class="muted" role="status">
-          Загрузка каталога…
-        </span>
+        <span id="catalog-count" class="badge">Загрузка…</span>
       </div>
 
+      <div class="panel">
+        <label for="catalog-search">Поиск по названию</label>
+        <input
+          id="catalog-search"
+          type="search"
+          placeholder="Например, ReadyToSky"
+          autocomplete="off"
+        >
+      </div>
+
+      <p id="catalog-status" class="muted" role="status"></p>
       <div id="catalog-grid" class="catalog-grid"></div>
-
-      <div id="catalog-empty" class="empty-state" hidden>
-        Передатчики не найдены.
-      </div>
     </section>
 
-    <!-- Конфигурация -->
     <section
-      id="config-panel"
+      id="configuration-page"
       role="tabpanel"
-      aria-labelledby="config-tab"
+      aria-labelledby="configuration-tab"
       hidden
     >
-      <div class="configuration-stack">
-
-        <!-- Блок 1 -->
-        <section class="panel">
-          <div class="section-heading">
-            <div>
-              <div class="eyebrow">ШАГ 01</div>
-              <h2>Выбор передатчика</h2>
-            </div>
-
-            <span class="badge">VTX</span>
-          </div>
-
-          <label class="field">
-            <span>Модель видеопередатчика</span>
-            <select id="device-select">
-              <option value="">Не указан</option>
-            </select>
-          </label>
-
-          <p class="hint">
-            Без выбранной модели доступны только VTX-правила.
-            Мощности в них обозначаются индексами уровней.
-          </p>
-        </section>
-
-        <!-- Блок 2 -->
-        <section id="device-panel" class="panel" hidden>
-          <div class="section-heading">
-            <div>
-              <div class="eyebrow">ШАГ 02</div>
-              <h2>Параметры передатчика</h2>
-            </div>
-
-            <span id="device-protocol-badge" class="badge"></span>
-          </div>
-
-          <div class="device-layout">
-            <div>
-              <div id="device-photo" class="photo-box large-photo"></div>
-
-              <h3 id="device-name"></h3>
-              <dl id="device-description" class="spec-list"></dl>
-            </div>
-
-            <div class="settings-column">
-              <label class="field">
-                <span>Протокол подключения</span>
-                <input id="protocol" readonly placeholder="Не выбран">
-              </label>
-
-              <div class="form-grid">
-                <label class="field">
-                  <span>UART</span>
-                  <select id="uart"></select>
-                </label>
-
-                <label class="field">
-                  <span>Band</span>
-                  <select id="band"></select>
-                </label>
-
-                <label class="field">
-                  <span>Канал</span>
-                  <select id="channel"></select>
-                </label>
-
-                <label class="field">
-                  <span>Частота</span>
-                  <input id="frequency" readonly>
-                </label>
-              </div>
-
-              <label class="checkbox-field">
-                <input id="enable-rules" type="checkbox">
-                <span class="checkbox-indicator" aria-hidden="true"></span>
-                <span>Добавить VTX правила</span>
-              </label>
-
-              <p class="hint">
-                Протокол, диапазоны, каналы и уровни мощности
-                загружаются из конфигурации выбранной модели.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Блок 3 -->
-        <section id="rules-panel" class="panel">
-          <div class="section-heading">
-            <div>
-              <div class="eyebrow">ШАГ 03</div>
-              <h2>VTX правила</h2>
-            </div>
-
-            <button id="lua-button" class="button button-primary" type="button">
-              &lt;/&gt; .lua
-            </button>
-          </div>
-
-          <p class="hint">
-            AUX1 соответствует CH5. ШИМ автоматически распределяется
-            в пределах 900–2100 мкс с шагом 25 мкс.
-          </p>
-
-          <div class="rules-layout">
-            <section class="rule-group">
-              <div class="group-title">
-                <span class="group-icon">P</span>
-                <h3>Управление мощностью</h3>
-              </div>
-
-              <div class="form-grid">
-                <label class="field">
-                  <span>AUX / канал</span>
-                  <select id="power-aux"></select>
-                </label>
-
-                <label class="field">
-                  <span>Количество правил</span>
-                  <input
-                    id="power-count"
-                    type="number"
-                    min="0"
-                    max="8"
-                    step="1"
-                    value="3"
-                    inputmode="numeric"
-                  >
-                </label>
-              </div>
-
-              <div id="power-rules" class="rule-list"></div>
-            </section>
-
-            <section class="rule-group">
-              <div class="group-title">
-                <span class="group-icon">CH</span>
-                <h3>Управление каналами</h3>
-              </div>
-
-              <div class="form-grid">
-                <label class="field">
-                  <span>AUX / канал</span>
-                  <select id="channel-aux"></select>
-                </label>
-
-                <label class="field">
-                  <span>Количество правил</span>
-                  <input
-                    id="channel-count"
-                    type="number"
-                    min="0"
-                    max="10"
-                    step="1"
-                    value="3"
-                    inputmode="numeric"
-                  >
-                </label>
-              </div>
-
-              <div id="channel-rules" class="rule-list"></div>
-            </section>
-          </div>
-
-          <div class="rules-footer">
-            <span id="rules-summary" class="badge"></span>
-            <span class="hint">
-              До 10 правил суммарно. Для мощности — до 8.
-              Для двух групп используются разные AUX.
-            </span>
-          </div>
-        </section>
-
-        <!-- Блок 4 -->
-        <section class="panel cli-panel">
-          <div class="section-heading">
-            <div>
-              <div class="eyebrow">РЕЗУЛЬТАТ</div>
-              <h2>CLI конфигурация</h2>
-            </div>
-
-            <button id="copy-cli" class="button button-secondary" type="button">
-              Скопировать
-            </button>
-          </div>
-
-          <div class="terminal-bar">
-            <div class="terminal-dots" aria-hidden="true">
-              <i></i><i></i><i></i>
-            </div>
-            <span>Betaflight CLI</span>
-            <span id="cli-line-count"></span>
-          </div>
-
-          <textarea
-            id="cli-output"
-            class="cli-output"
-            readonly
-            spellcheck="false"
-            aria-label="Сгенерированные команды Betaflight CLI"
-          ></textarea>
-
-          <p class="hint warning">
-            Проверьте UART и команды перед применением.
-            Назначение UART заменяет его текущую функцию.
-            Команды vtx заменяют существующие VTX-правила.
-            Команда save не добавляется: выполните её вручную после проверки.
-          </p>
-        </section>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">НАСТРОЙКА</p>
+          <h1>Конфигурация VTX</h1>
+        </div>
+        <span class="badge">LIVE CLI</span>
       </div>
+
+      <!-- Блок 1 -->
+      <section class="panel">
+        <div class="panel-heading">
+          <h2><span class="step">01</span> Выбор передатчика</h2>
+        </div>
+
+        <label for="transmitter">Модель</label>
+        <select id="transmitter">
+          <option value="">Не выбран — только VTX-правила</option>
+        </select>
+
+        <p class="hint">
+          Без выбранной модели доступны правила с номерами уровней мощности
+          и стандартными обозначениями диапазонов.
+        </p>
+      </section>
+
+      <!-- Блок 2 -->
+      <section id="transmitter-panel" class="panel" hidden>
+        <div class="panel-heading">
+          <h2><span class="step">02</span> Передатчик и подключение</h2>
+        </div>
+
+        <div class="two-columns">
+          <div>
+            <div id="transmitter-image" class="device-image"></div>
+            <h3 id="transmitter-name"></h3>
+            <dl id="transmitter-description" class="spec-list"></dl>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              Протокол подключения
+              <select id="protocol"></select>
+            </label>
+
+            <label>
+              UART
+              <select id="uart"></select>
+            </label>
+
+            <label>
+              Band
+              <select id="base-band"></select>
+            </label>
+
+            <label>
+              Канал
+              <select id="base-channel"></select>
+            </label>
+
+            <label class="check full-width">
+              <input id="enable-rules" type="checkbox" checked>
+              <span>Добавить VTX-правила</span>
+            </label>
+
+            <p class="hint full-width">
+              Протокол выбирается автоматически. Если модель поддерживает
+              несколько профилей, его можно изменить.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Блок 3 -->
+      <section id="rules-panel" class="panel">
+        <div class="panel-heading">
+          <h2><span class="step">03</span> VTX-правила</h2>
+
+          <button id="open-lua" class="button primary" type="button">
+            &lt;/&gt; .lua
+          </button>
+        </div>
+
+        <p class="hint">
+          AUX выбирается отдельно для каждого правила. ШИМ-диапазоны
+          автоматически распределяются между правилами одного AUX.
+        </p>
+
+        <div class="two-columns rules-columns">
+          <section class="rule-section">
+            <h3>Уровни мощности</h3>
+
+            <label for="power-count">Количество правил</label>
+            <input id="power-count" type="number" min="0" step="1" value="0">
+
+            <div id="power-rules" class="rule-list"></div>
+          </section>
+
+          <section class="rule-section">
+            <h3>Переключение каналов</h3>
+
+            <label for="channel-count">Количество правил</label>
+            <input id="channel-count" type="number" min="0" step="1" value="3">
+
+            <div id="channel-rules" class="rule-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <!-- Блок 4 -->
+      <section class="panel">
+        <div class="panel-heading">
+          <h2><span class="step">04</span> CLI-результат</h2>
+
+          <button id="copy-cli" class="button secondary" type="button">
+            Скопировать
+          </button>
+        </div>
+
+        <div id="cli-errors" class="notice error" role="alert" hidden></div>
+
+        <textarea
+          id="cli-output"
+          class="code-output"
+          rows="15"
+          readonly
+          spellcheck="false"
+          aria-label="Сгенерированные CLI-команды"
+        ></textarea>
+
+        <p class="hint">
+          Формат команд — Betaflight. Перед применением проверьте поддержку
+          команд вашей прошивкой, назначение UART и лимит VTX-правил.
+          Старые правила автоматически не удаляются; команда save не добавляется.
+        </p>
+      </section>
     </section>
+
+    <footer class="footer">
+      <span>ezvtx · by l4</span>
+      <span>Проверьте настройки перед подачей питания на VTX</span>
+    </footer>
   </main>
 
-  <footer class="container site-footer">
-    <span><strong>ezvtx</strong> · by l4</span>
-    <span>Используйте только разрешённые частоты и мощности.</span>
-  </footer>
-
   <dialog id="lua-dialog" aria-labelledby="lua-title">
-    <div class="dialog-header">
-      <h2 id="lua-title">LUA</h2>
+    <div class="modal-header">
+      <div>
+        <p class="eyebrow">ГЕНЕРАТОР СКРИПТА</p>
+        <h2 id="lua-title">MPX Lua</h2>
+      </div>
+
       <button
         id="close-lua"
         class="icon-button"
@@ -336,7 +241,141 @@
       >×</button>
     </div>
 
-    <div class="lua-empty-body"></div>
+    <div class="modal-body">
+      <nav class="tabs compact" role="tablist" aria-label="Lua">
+        <button
+          id="lua-settings-tab"
+          class="tab active"
+          type="button"
+          role="tab"
+          aria-selected="true"
+          aria-controls="lua-settings"
+          data-lua-page="settings"
+        >Параметры</button>
+
+        <button
+          id="lua-script-tab"
+          class="tab"
+          type="button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="lua-script"
+          tabindex="-1"
+          data-lua-page="script"
+        >Полный Lua-скрипт</button>
+      </nav>
+
+      <section
+        id="lua-settings"
+        role="tabpanel"
+        aria-labelledby="lua-settings-tab"
+      >
+        <div class="panel">
+          <label for="lua-template-file">Загрузить оригинальный Lua-шаблон</label>
+          <input id="lua-template-file" type="file" accept=".lua,text/plain">
+          <p id="template-status" class="hint" role="status"></p>
+        </div>
+
+        <div class="panel">
+          <label for="switch-count">Количество тумблеров</label>
+          <select id="switch-count">
+            <option value="1">1 тумблер — шаг +1</option>
+            <option value="2">2 тумблера — шаг +1 / шаг −1</option>
+          </select>
+          <div class="two-columns switch-columns">
+            <div class="rule-card">
+              <h3>Шаг +1</h3>
+
+              <label>
+                Название переключателя
+                <select id="inc-switch"></select>
+              </label>
+
+              <label>
+                Положение
+                <select id="inc-state">
+                  <option value="up">Верхнее</option>
+                  <option value="mid">Среднее</option>
+                  <option value="down">Нижнее</option>
+                </select>
+              </label>
+            </div>
+
+            <div id="dec-settings" class="rule-card" hidden>
+              <h3>Шаг −1</h3>
+
+              <label>
+                Название переключателя
+                <select id="dec-switch"></select>
+              </label>
+
+              <label>
+                Положение
+                <select id="dec-state">
+                  <option value="up">Верхнее</option>
+                  <option value="mid">Среднее</option>
+                  <option value="down" selected>Нижнее</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-grid settings-bottom">
+            <label class="check">
+              <input id="lua-hold" type="checkbox">
+              <span>Автошаг при удержании</span>
+            </label>
+
+            <label>
+              Задержка, секунд
+              <input
+                id="lua-delay"
+                type="number"
+                min="0.1"
+                step="0.1"
+                value="3"
+                disabled
+              >
+            </label>
+
+            <label class="check">
+              <input id="lua-voice" type="checkbox" checked>
+              <span>Озвучка</span>
+            </label>
+          </div>
+        </div>
+
+        <p class="hint">
+          Каждое VTX-правило становится отдельной позицией Lua:
+          сначала мощности, затем каналы. CHANNELS содержит физические
+          номера каналов: AUX1 → CH5. FREQUENCIES всегда заполнен нулями.
+        </p>
+      </section>
+
+      <section
+        id="lua-script"
+        role="tabpanel"
+        aria-labelledby="lua-script-tab"
+        hidden
+      >
+        <textarea
+          id="lua-output"
+          class="code-output lua-output"
+          readonly
+          spellcheck="false"
+          aria-label="Полный Lua-скрипт"
+        ></textarea>
+      </section>
+
+      <div id="lua-errors" class="notice error" role="alert" hidden></div>
+    </div>
+
+    <div class="modal-footer">
+      <span id="lua-summary" class="muted"></span>
+      <button id="copy-lua" class="button primary" type="button">
+        Скопировать скрипт
+      </button>
+    </div>
   </dialog>
 
   <div id="toast" class="toast" role="status" hidden></div>
