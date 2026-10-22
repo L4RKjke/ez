@@ -1,0 +1,59 @@
+{
+  "default_protocol": "IRC Tramp",
+  "bands": [
+    {
+      "name": "BAND_A",
+      "letter": "A",
+      "frequencies": [
+        1080,
+        1120,
+        1160,
+        1200,
+        1240,
+        1280,
+        1320,
+        1360
+      ]
+    },
+    {
+      "name": "BAND_B",
+      "letter": "B",
+      "frequencies": [
+        1200,
+        1220,
+        1240,
+        1258,
+        1280,
+        1300,
+        1320,
+        1340
+      ]
+    }
+  ],
+  "profiles": {
+    "IRC Tramp": {
+      "powers": [
+        {
+          "label": "25",
+          "value": 25,
+          "mw": 25
+        },
+        {
+          "label": "400",
+          "value": 400,
+          "mw": 400
+        },
+        {
+          "label": "800",
+          "value": 800,
+          "mw": 800
+        },
+        {
+          "label": "5W",
+          "value": 5000,
+          "mw": 5000
+        }
+      ]
+    }
+  }
+}

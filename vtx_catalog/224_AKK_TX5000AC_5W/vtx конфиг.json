@@ -1,0 +1,153 @@
+{
+  "default_protocol": "SmartAudio",
+  "bands": [
+    {
+      "name": "BOSCAM_A",
+      "letter": "A",
+      "frequencies": [
+        5474,
+        5492,
+        5510,
+        5528,
+        5546,
+        5564,
+        5582,
+        5600
+      ]
+    },
+    {
+      "name": "BOSCAM_B",
+      "letter": "B",
+      "frequencies": [
+        5362,
+        5399,
+        5436,
+        5473,
+        5510,
+        5547,
+        5584,
+        5621
+      ]
+    },
+    {
+      "name": "BOSCAM_E",
+      "letter": "E",
+      "frequencies": [
+        5325,
+        5348,
+        5366,
+        5384,
+        5402,
+        5420,
+        5438,
+        5456
+      ]
+    },
+    {
+      "name": "FATSHARK",
+      "letter": "F",
+      "frequencies": [
+        5129,
+        5159,
+        5189,
+        5219,
+        5249,
+        5279,
+        5309,
+        5339
+      ]
+    },
+    {
+      "name": "RACEBAND",
+      "letter": "R",
+      "frequencies": [
+        4990,
+        5020,
+        5050,
+        5080,
+        5110,
+        5140,
+        5170,
+        5200
+      ]
+    },
+    {
+      "name": "CUSTOM_P",
+      "letter": "P",
+      "frequencies": [
+        5333,
+        5373,
+        5413,
+        5453,
+        5493,
+        5533,
+        5573,
+        5613
+      ]
+    },
+    {
+      "name": "CUSTOM_L",
+      "letter": "L",
+      "frequencies": [
+        4900,
+        4940,
+        4921,
+        4958,
+        4995,
+        5032,
+        5069,
+        5099
+      ]
+    },
+    {
+      "name": "CUSTOM_U",
+      "letter": "U",
+      "frequencies": [
+        5960,
+        5980,
+        6000,
+        6020,
+        6030,
+        6040,
+        6050,
+        6060
+      ]
+    }
+  ],
+  "profiles": {
+    "SmartAudio": {
+      "powers": [
+        {
+          "label": "25",
+          "value": 0,
+          "mw": 25
+        },
+        {
+          "label": "250",
+          "value": 1,
+          "mw": 250
+        },
+        {
+          "label": "500",
+          "value": 2,
+          "mw": 500
+        },
+        {
+          "label": "1W",
+          "value": 3,
+          "mw": 1000
+        },
+        {
+          "label": "3W",
+          "value": 4,
+          "mw": 3000
+        },
+        {
+          "label": "5W",
+          "value": 5,
+          "mw": 5000
+        }
+      ]
+    }
+  }
+}

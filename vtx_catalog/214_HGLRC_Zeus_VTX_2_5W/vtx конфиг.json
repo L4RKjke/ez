@@ -1,0 +1,106 @@
+{
+  "default_protocol": "IRC Tramp",
+  "bands": [
+    {
+      "name": "BOSCAM_A",
+      "letter": "A",
+      "frequencies": [
+        5865,
+        5845,
+        5825,
+        5805,
+        5785,
+        5765,
+        5745,
+        5725
+      ]
+    },
+    {
+      "name": "BOSCAM_B",
+      "letter": "B",
+      "frequencies": [
+        5733,
+        5752,
+        5771,
+        5790,
+        5809,
+        5828,
+        5847,
+        5866
+      ]
+    },
+    {
+      "name": "BOSCAM_E",
+      "letter": "E",
+      "frequencies": [
+        5705,
+        5685,
+        5665,
+        5645,
+        5885,
+        5905,
+        5925,
+        5945
+      ]
+    },
+    {
+      "name": "FATSHARK",
+      "letter": "F",
+      "frequencies": [
+        5740,
+        5760,
+        5780,
+        5800,
+        5820,
+        5840,
+        5860,
+        5880
+      ]
+    },
+    {
+      "name": "RACEBAND",
+      "letter": "R",
+      "frequencies": [
+        5658,
+        5695,
+        5732,
+        5769,
+        5806,
+        5843,
+        5880,
+        5917
+      ]
+    }
+  ],
+  "profiles": {
+    "IRC Tramp": {
+      "powers": [
+        {
+          "label": "25",
+          "value": 25,
+          "mw": 25
+        },
+        {
+          "label": "200",
+          "value": 200,
+          "mw": 200
+        },
+        {
+          "label": "800",
+          "value": 800,
+          "mw": 800
+        },
+        {
+          "label": "1W6",
+          "value": 1600,
+          "mw": 1600
+        },
+        {
+          "label": "2W5",
+          "value": 2500,
+          "mw": 2500
+        }
+      ]
+    }
+  }
+}

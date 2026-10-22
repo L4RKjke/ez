@@ -1,0 +1,40 @@
+{
+  "default_protocol": "IRC Tramp",
+  "bands": [
+    {
+      "name": "BAND_A",
+      "letter": "A",
+      "frequencies": [
+        1680,
+        1720,
+        1760,
+        1800,
+        1840,
+        1880,
+        1920,
+        1960
+      ]
+    }
+  ],
+  "profiles": {
+    "IRC Tramp": {
+      "powers": [
+        {
+          "label": "25",
+          "value": 25,
+          "mw": 25
+        },
+        {
+          "label": "800",
+          "value": 800,
+          "mw": 800
+        },
+        {
+          "label": "6W",
+          "value": 6000,
+          "mw": 6000
+        }
+      ]
+    }
+  }
+}

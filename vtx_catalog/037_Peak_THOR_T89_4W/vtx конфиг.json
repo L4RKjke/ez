@@ -1,0 +1,106 @@
+{
+  "default_protocol": "SmartAudio",
+  "bands": [
+    {
+      "name": "BOSCAM_A",
+      "letter": "A",
+      "frequencies": [
+        802,
+        804,
+        806,
+        808,
+        810,
+        812,
+        814,
+        816
+      ]
+    },
+    {
+      "name": "BOSCAM_B",
+      "letter": "B",
+      "frequencies": [
+        818,
+        820,
+        822,
+        824,
+        826,
+        828,
+        830,
+        832
+      ]
+    },
+    {
+      "name": "BOSCAM_E",
+      "letter": "E",
+      "frequencies": [
+        834,
+        836,
+        838,
+        840,
+        842,
+        844,
+        846,
+        848
+      ]
+    },
+    {
+      "name": "FATSHARK",
+      "letter": "F",
+      "frequencies": [
+        850,
+        852,
+        854,
+        856,
+        858,
+        860,
+        862,
+        864
+      ]
+    },
+    {
+      "name": "RACEBAND",
+      "letter": "R",
+      "frequencies": [
+        866,
+        868,
+        870,
+        872,
+        874,
+        876,
+        878,
+        880
+      ]
+    }
+  ],
+  "profiles": {
+    "SmartAudio": {
+      "powers": [
+        {
+          "label": "25",
+          "value": 0,
+          "mw": 25
+        },
+        {
+          "label": "200",
+          "value": 1,
+          "mw": 200
+        },
+        {
+          "label": "800",
+          "value": 2,
+          "mw": 800
+        },
+        {
+          "label": "1W",
+          "value": 3,
+          "mw": 1000
+        },
+        {
+          "label": "4W",
+          "value": 4,
+          "mw": 4000
+        }
+      ]
+    }
+  }
+}

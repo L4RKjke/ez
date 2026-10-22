@@ -1,0 +1,30 @@
+{
+  "default_protocol": "IRC Tramp",
+  "bands": [
+    {
+      "name": "1G2",
+      "letter": "A",
+      "frequencies": [
+        1080,
+        1120,
+        1160,
+        1200,
+        1240,
+        1280,
+        1320,
+        1360
+      ]
+    }
+  ],
+  "profiles": {
+    "IRC Tramp": {
+      "powers": [
+        {
+          "label": "1W6",
+          "value": 1600,
+          "mw": 1600
+        }
+      ]
+    }
+  }
+}
