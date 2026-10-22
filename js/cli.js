@@ -1,65 +1,115 @@
-  container.replaceChildren(image);
+export const MAX_RULES = 10;
+
+export function pwmRange(index, count) {
+  // 900–2100 мкс = 48 шагов по 25 мкс.
+  const start = 900 + Math.floor(index * 48 / count) * 25;
+  const end = 900 + Math.floor((index + 1) * 48 / count) * 25;
+
+  return { start, end };
 }
 
-export function renderSpecs(container, description, keys = null) {
-  container.replaceChildren();
+export function generateCLI(state) {
+  const lines = [];
+  const config = state.device?.config;
 
-  const entries = keys
-    ? keys.map(key => [key, description[key] ?? "—"])
-    : Object.entries(description).filter(([key]) => key !== "Название");
+  if (config) {
+    const channelCount = Math.max(
+      ...config.bands.map(band => band.frequencies.length)
+    );
 
-  for (const [key, value] of entries) {
-    const term = document.createElement("dt");
-    const detail = document.createElement("dd");
+    // Betaflight:
+    // FUNCTION_VTX_SMARTAUDIO = 2048
+    // FUNCTION_VTX_TRAMP = 8192
+    const serialFunction =
+      config.protocol === "IRC Tramp" ? 8192 : 2048;
 
-    term.textContent = key;
-    detail.textContent = String(value);
+    lines.push(
+      "# VTX configuration",
+      `# Protocol: ${config.protocol}`,
+      `# Verify UART${state.uart} mapping before applying`,
+      "",
+      `serial ${state.uart - 1} ${serialFunction} 115200 57600 0 115200`,
+      "",
+      "vtxtable bands 0",
+      `vtxtable channels ${channelCount}`,
+      `vtxtable bands ${config.bands.length}`
+    );
 
-    container.append(term, detail);
+    config.bands.forEach((band, index) => {
+      const frequencies = Array.from(
+        { length: channelCount },
+        (_, channel) => band.frequencies[channel] ?? 0
+      );
+
+      lines.push(
+        `vtxtable band ${index + 1} ${band.name} ${band.letter} CUSTOM ` +
+        frequencies.join(" ")
+      );
+    });
+
+    lines.push(
+      `vtxtable powerlevels ${config.powers.length}`,
+      "vtxtable powervalues " +
+        config.powers.map(power => power.value).join(" "),
+      "vtxtable powerlabels " +
+        config.powers.map(power => power.label).join(" "),
+      "",
+      `set vtx_band = ${state.band}`,
+      `set vtx_channel = ${state.channel}`,
+      `set vtx_freq = ${
+        config.bands[state.band - 1].frequencies[state.channel - 1]
+      }`,
+      "",
+      "# Replace VTX activation rules"
+    );
   }
-}
 
-export function renderCatalog(devices, container, onConfigure) {
-  container.replaceChildren();
+  const rules = [];
 
-  for (const device of devices) {
-    const card = document.createElement("article");
-    card.className = "vtx-card";
+  if (!config || state.rulesEnabled) {
+    state.powerRules.forEach((rule, index) => {
+      const { start, end } = pwmRange(index, state.powerRules.length);
 
-    const photo = document.createElement("div");
-    photo.className = "photo-box";
-    renderPhoto(photo, device);
+      rules.push({
+        aux: state.powerAux,
+        band: 0,
+        channel: 0,
+        power: rule.power,
+        start,
+        end
+      });
+    });
 
-    const title = document.createElement("h3");
-    title.textContent = device.name;
+    state.channelRules.forEach((rule, index) => {
+      const { start, end } = pwmRange(index, state.channelRules.length);
 
-    const specs = document.createElement("dl");
-    specs.className = "spec-list";
-    renderSpecs(specs, device.description);
+      rules.push({
+        aux: state.channelAux,
+        band: rule.band,
+        channel: rule.channel,
+        power: 0,
+        start,
+        end
+      });
+    });
+  }
 
-    const note = document.createElement("p");
-    note.className = "card-note";
-    note.textContent = device.problem;
+  // Все слоты записываются явно, чтобы старые правила не оставались.
+  for (let index = 0; index < MAX_RULES; index++) {
+    const rule = rules[index];
 
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "button button-secondary";
-    button.textContent = "Посмотреть конфигурацию";
-    button.disabled = !device.config;
-
-    if (!device.config) {
-      button.title = device.problem || "Файл конфигурации отсутствует";
+    if (!rule) {
+      lines.push(`vtx ${index} 0 0 0 0 900 900`);
+      continue;
     }
 
-    button.addEventListener("click", () => onConfigure(device.id));
-
-    card.append(photo, title, specs);
-
-    if (device.problem) {
-      card.append(note);
-    }
-
-    card.append(button);
-    container.append(card);
+    // В CLI AUX индексируется с нуля: AUX1 -> 0.
+    lines.push(
+      `vtx ${index} ${rule.aux - 1} ` +
+      `${rule.band} ${rule.channel} ${rule.power} ` +
+      `${rule.start} ${rule.end}`
+    );
   }
+
+  return lines.join("\n");
 }
