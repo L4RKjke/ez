@@ -156,40 +156,72 @@
       </section>
 
       <!-- Блок 3 -->
-      <section id="rules-panel" class="panel">
-        <div class="panel-heading">
-          <h2><span class="step">03</span> VTX-правила</h2>
+	  <div class="two-columns rules-columns">
+	  <section class="rule-section">
+		<h3>Уровни мощности</h3>
 
-          <button id="open-lua" class="button primary" type="button">
-            &lt;/&gt; .lua
-          </button>
-        </div>
+		<div class="rules-toolbar">
+		  <label>
+			Количество правил
+			<input
+			  id="power-count"
+			  type="number"
+			  min="0"
+			  step="1"
+			  value="0"
+			>
+		  </label>
 
-        <p class="hint">
-          AUX выбирается отдельно для каждого правила. ШИМ-диапазоны
-          автоматически распределяются между правилами одного AUX.
-        </p>
+		  <label>
+			Назначение AUX
+			<select id="power-aux-mode">
+			  <option value="individual">Для каждого правила</option>
+			  <option value="shared">Общий для мощности</option>
+			</select>
+		  </label>
 
-        <div class="two-columns rules-columns">
-          <section class="rule-section">
-            <h3>Уровни мощности</h3>
+		  <label id="power-shared-aux-field" class="shared-aux-field" hidden>
+			AUX для всех правил мощности
+			<select id="power-shared-aux"></select>
+		  </label>
+		</div>
 
-            <label for="power-count">Количество правил</label>
-            <input id="power-count" type="number" min="0" step="1" value="0">
+		<div id="power-rules" class="rule-list"></div>
+	  </section>
 
-            <div id="power-rules" class="rule-list"></div>
-          </section>
+	  <section class="rule-section">
+		<h3>Переключение каналов</h3>
 
-          <section class="rule-section">
-            <h3>Переключение каналов</h3>
+		<div class="rules-toolbar">
+		  <label>
+			Количество правил
+			<input
+			  id="channel-count"
+			  type="number"
+			  min="0"
+			  step="1"
+			  value="3"
+			>
+		  </label>
 
-            <label for="channel-count">Количество правил</label>
-            <input id="channel-count" type="number" min="0" step="1" value="3">
+		  <label>
+			Назначение AUX
+			<select id="channel-aux-mode">
+			  <option value="individual">Для каждого правила</option>
+			  <option value="shared">Общий для каналов</option>
+			</select>
+		  </label>
 
-            <div id="channel-rules" class="rule-list"></div>
-          </section>
-        </div>
-      </section>
+		  <label id="channel-shared-aux-field" class="shared-aux-field" hidden>
+			AUX для всех правил каналов
+			<select id="channel-shared-aux"></select>
+		  </label>
+		</div>
+
+		<div id="channel-rules" class="rule-list"></div>
+	  </section>
+	</div>
+
 
       <!-- Блок 4 -->
       <section class="panel">
