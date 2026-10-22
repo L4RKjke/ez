@@ -2,414 +2,300 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#081526">
-  <title>ezvtx — конфигуратор VTX</title>
-  <link rel="stylesheet" href="./css/style.css">
-  <script type="module" src="./js/app.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+
+  <title>VTX — каталог видеопередатчиков</title>
+
+  <link rel="stylesheet" href="style.css">
+  <script src="color-scheme.js" defer></script>
+  <script src="catalog.js" defer></script>
 </head>
+
 <body>
   <header class="header">
     <div class="container header-inner">
-      <a class="logo" href="./index.html" aria-label="ezvtx — главная">
-        ez<span>vtx</span>
-      </a>
+      <div class="brand" aria-label="VTX">
+        <span class="brand-icon" aria-hidden="true">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M5 8a10 10 0 0 1 14 0M8 11a6 6 0 0 1 8 0M11 14a2 2 0 0 1 2 0"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
+          </svg>
+        </span>
 
-      <span class="header-description">Настройки VTX</span>
+        VTX
+      </div>
 
-      <span class="author">by <strong>l4</strong></span>
+      <nav class="navigation" aria-label="Основные разделы">
+        <button
+          class="nav-button"
+          type="button"
+          data-section="catalog"
+          aria-controls="catalog"
+          aria-pressed="true"
+        >
+          Каталог
+        </button>
+
+        <button
+          class="nav-button"
+          type="button"
+          data-section="configuration"
+          aria-controls="configuration"
+          aria-pressed="false"
+        >
+          Конфигурация
+        </button>
+      </nav>
+      <button
+        id="theme-toggle"
+        class="theme-toggle"
+        type="button"
+        aria-label="Включить тёмную тему"
+      >
+        <span id="theme-icon" aria-hidden="true">🌙</span>
+        <span id="theme-label">Тёмная тема</span>
+      </button>
     </div>
   </header>
 
   <main class="container">
-    <nav class="tabs" role="tablist" aria-label="Разделы сайта">
+    <!-- Каталог -->
+    <section id="catalog" aria-labelledby="catalog-title">
+      <p class="eyebrow">Оборудование / VTX</p>
+
+      <h1 id="catalog-title">Видеопередатчики</h1>
+
+      <p class="intro">
+        Характеристики, распиновка и конфигурации — в одном месте.
+      </p>
+
+      <div class="toolbar">
+        <label class="search">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <circle
+              cx="10.5"
+              cy="10.5"
+              r="6.5"
+              stroke="currentColor"
+              stroke-width="1.7"
+            />
+            <path
+              d="m16 16 4 4"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+            />
+          </svg>
+
+          <input
+            id="search"
+            type="search"
+            placeholder="Поиск по названию..."
+            aria-label="Поиск видеопередатчика по названию"
+            autocomplete="off"
+          >
+        </label>
+
+        <button
+          class="filter-button"
+          type="button"
+          title="Фильтры будут добавлены позже"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M4 7h16M4 17h16"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+            />
+            <circle
+              cx="9"
+              cy="7"
+              r="3"
+              fill="white"
+              stroke="currentColor"
+              stroke-width="1.7"
+            />
+            <circle
+              cx="15"
+              cy="17"
+              r="3"
+              fill="white"
+              stroke="currentColor"
+              stroke-width="1.7"
+            />
+          </svg>
+
+          Фильтры
+        </button>
+      </div>
+
+      <div
+        id="catalog-count"
+        class="catalog-meta"
+        role="status"
+      ></div>
+
+      <!-- Карточки  -->
+    <section class="vtx-catalog" aria-label="Каталог видеопередатчиков">
+  <p
+    id="vtx-catalog-status"
+    class="vtx-catalog__status"
+    role="status"
+    aria-live="polite"
+  ></p>
+
+  <div id="vtx-cards" class="vtx-grid"></div>
+</section>
+
+<template id="vtx-card-template">
+  <article class="vtx-card">
+    <div class="vtx-card__photo">
+      <span class="vtx-card__placeholder">Нет фото</span>
+      <img class="vtx-card__image" alt="" loading="lazy" decoding="async">
+    </div>
+
+    <header class="vtx-card__header">
+      <h3 class="vtx-card__title"></h3>
+      <div class="vtx-card__badges"></div>
+    </header>
+
+    <div class="vtx-card__tabs" role="tablist" aria-label="Данные видеопередатчика">
       <button
-        id="catalog-tab"
-        class="tab active"
+        class="vtx-card__tab"
         type="button"
         role="tab"
         aria-selected="true"
-        aria-controls="catalog-page"
-        data-page="catalog"
+        data-tab="description"
       >
-        Каталог
+        Описание
       </button>
 
       <button
-        id="configuration-tab"
-        class="tab"
+        class="vtx-card__tab"
         type="button"
         role="tab"
         aria-selected="false"
-        aria-controls="configuration-page"
         tabindex="-1"
-        data-page="configuration"
+        data-tab="connection"
       >
-        Конфигурация
+        Подключение / CLI
       </button>
-    </nav>
+    </div>
 
-    <section
-      id="catalog-page"
-      role="tabpanel"
-      aria-labelledby="catalog-tab"
-    >
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">ОБОРУДОВАНИЕ</p>
-          <h1>Каталог передатчиков</h1>
-        </div>
-
-        <span id="catalog-count" class="badge">Загрузка…</span>
-      </div>
-
-      <div class="panel">
-        <label for="catalog-search">Поиск по названию</label>
-        <input
-          id="catalog-search"
-          type="search"
-          placeholder="Например, ReadyToSky"
-          autocomplete="off"
-        >
-      </div>
-
-      <p id="catalog-status" class="muted" role="status"></p>
-      <div id="catalog-grid" class="catalog-grid"></div>
-    </section>
-
-    <section
-      id="configuration-page"
-      role="tabpanel"
-      aria-labelledby="configuration-tab"
-      hidden
-    >
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">НАСТРОЙКА</p>
-          <h1>Конфигурация VTX</h1>
-        </div>
-        <span class="badge">LIVE CLI</span>
-      </div>
-
-      <!-- Блок 1 -->
-      <section class="panel">
-        <div class="panel-heading">
-          <h2><span class="step">01</span> Выбор передатчика</h2>
-        </div>
-
-        <label for="transmitter">Модель</label>
-        <select id="transmitter">
-          <option value="">Не выбран — только VTX-правила</option>
-        </select>
-
-        <p class="hint">
-          Без выбранной модели доступны правила с номерами уровней мощности
-          и стандартными обозначениями диапазонов.
-        </p>
+    <div class="vtx-card__content">
+      <section
+        class="vtx-card__panel"
+        role="tabpanel"
+        tabindex="0"
+        data-panel="description"
+      >
+        <dl class="vtx-card__specs"></dl>
       </section>
 
-      <!-- Блок 2 -->
-      <section id="transmitter-panel" class="panel" hidden>
-        <div class="panel-heading">
-          <h2><span class="step">02</span> Передатчик и подключение</h2>
+      <section
+        class="vtx-card__panel"
+        role="tabpanel"
+        tabindex="0"
+        data-panel="connection"
+        hidden
+      >  
+        <h4 class="vtx-card__subtitle">Распиновка</h4>
+
+        <div class="vtx-card__pinout">
+          <p class="vtx-card__pinout-placeholder">
+            Здесь будет фото распиновки
+          </p>
+
+          <!-- Для будущего изображения. Пока src не задан, запросов нет. -->
+          <img
+            class="vtx-card__pin-image"
+            alt="Схема распиновки видеопередатчика"
+            loading="lazy"
+            decoding="async"
+            hidden
+          >
         </div>
 
-        <div class="two-columns">
-          <div>
-            <div id="transmitter-image" class="device-image"></div>
-            <h3 id="transmitter-name"></h3>
-            <dl id="transmitter-description" class="spec-list"></dl>
-          </div>
 
-          <div class="form-grid">
-            <label>
-              Протокол подключения
-              <select id="protocol"></select>
-            </label>
-
-            <label>
-              UART
-              <select id="uart"></select>
-            </label>
-
-            <label>
-              Band
-              <select id="base-band"></select>
-            </label>
-
-            <label>
-              Канал
-              <select id="base-channel"></select>
-            </label>
-
-            <label class="check full-width">
-              <input id="enable-rules" type="checkbox" checked>
-              <span>Добавить VTX-правила</span>
-            </label>
-
-            <p class="hint full-width">
-              Протокол выбирается автоматически. Если модель поддерживает
-              несколько профилей, его можно изменить.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Блок 3 -->
-	  <div class="two-columns rules-columns">
-	  <section class="rule-section">
-		<h3>Уровни мощности</h3>
-
-		<div class="rules-toolbar">
-		  <label>
-			Количество правил
-			<input
-			  id="power-count"
-			  type="number"
-			  min="0"
-			  step="1"
-			  value="0"
-			>
-		  </label>
-
-		  <label>
-			Назначение AUX
-			<select id="power-aux-mode">
-			  <option value="individual">Для каждого правила</option>
-			  <option value="shared">Общий для мощности</option>
-			</select>
-		  </label>
-
-		  <label id="power-shared-aux-field" class="shared-aux-field" hidden>
-			AUX для всех правил мощности
-			<select id="power-shared-aux"></select>
-		  </label>
-		</div>
-
-		<div id="power-rules" class="rule-list"></div>
-	  </section>
-
-	  <section class="rule-section">
-		<h3>Переключение каналов</h3>
-
-		<div class="rules-toolbar">
-		  <label>
-			Количество правил
-			<input
-			  id="channel-count"
-			  type="number"
-			  min="0"
-			  step="1"
-			  value="3"
-			>
-		  </label>
-
-		  <label>
-			Назначение AUX
-			<select id="channel-aux-mode">
-			  <option value="individual">Для каждого правила</option>
-			  <option value="shared">Общий для каналов</option>
-			</select>
-		  </label>
-
-		  <label id="channel-shared-aux-field" class="shared-aux-field" hidden>
-			AUX для всех правил каналов
-			<select id="channel-shared-aux"></select>
-		  </label>
-		</div>
-
-		<div id="channel-rules" class="rule-list"></div>
-	  </section>
-	</div>
-
-
-      <!-- Блок 4 -->
-      <section class="panel">
-        <div class="panel-heading">
-          <h2><span class="step">04</span> CLI-результат</h2>
-
-          <button id="copy-cli" class="button secondary" type="button">
-            Скопировать
+        <div class="vtx-card__cli-header">
+          <h4 class="vtx-card__subtitle">CLI · vtxtable</h4>
+          <button
+            class="vtx-card__copy"
+            type="button"
+            disabled
+          >
+            Скопировать CLI
           </button>
         </div>
 
-        <div id="cli-errors" class="notice error" role="alert" hidden></div>
+        <pre class="vtx-card__cli" tabindex="0"><code></code></pre>
 
-        <textarea
-          id="cli-output"
-          class="code-output"
-          rows="15"
-          readonly
-          spellcheck="false"
-          aria-label="Сгенерированные CLI-команды"
-        ></textarea>
-
-        <p class="hint">
-          Формат команд — Betaflight. Перед применением проверьте поддержку
-          команд вашей прошивкой, назначение UART и лимит VTX-правил.
-          Старые правила автоматически не удаляются; команда save не добавляется.
+        <p class="vtx-card__notice">
+          Проверьте таблицу перед применением. Настройка UART и
+          протокола выполняется отдельно. Команда save не включена.
         </p>
+
+        <p
+          class="vtx-card__copy-status"
+          role="status"
+          aria-live="polite"
+        ></p>
       </section>
+    </div>
+
+    <footer class="vtx-card__footer">
+      <button class="vtx-card__config" type="button" disabled>
+        Посмотреть конфигурацию
+      </button>
+    </footer>
+  </article>
+</template>
+
+
+
+      <div id="no-results" class="empty-state" hidden>
+        <h2>Ничего не найдено</h2>
+        <p>Попробуйте изменить название в поиске.</p>
+      </div>
     </section>
 
-    <footer class="footer">
-      <span>ezvtx · by l4</span>
-      <span>Проверьте настройки перед подачей питания на VTX</span>
-    </footer>
-  </main>
+    <!-- Конфигурация -->
+    <section
+      id="configuration"
+      aria-labelledby="configuration-title"
+      hidden
+    >
+      <p class="eyebrow">Настройки / VTX</p>
+      <h1 id="configuration-title">Конфигурация</h1>
 
-  <dialog id="lua-dialog" aria-labelledby="lua-title">
-    <div class="modal-header">
-      <div>
-        <p class="eyebrow">ГЕНЕРАТОР СКРИПТА</p>
-        <h2 id="lua-title">MPX Lua</h2>
+      <p class="intro">
+        Пространство для настройки вашего видеопередатчика.
+      </p>
+
+      <div class="empty-state configuration-placeholder">
+        <h2>Здесь будут конфигурации</h2>
+        <p>Раздел пока находится в разработке.</p>
       </div>
-
-      <button
-        id="close-lua"
-        class="icon-button"
-        type="button"
-        aria-label="Закрыть окно"
-      >×</button>
-    </div>
-
-    <div class="modal-body">
-      <nav class="tabs compact" role="tablist" aria-label="Lua">
-        <button
-          id="lua-settings-tab"
-          class="tab active"
-          type="button"
-          role="tab"
-          aria-selected="true"
-          aria-controls="lua-settings"
-          data-lua-page="settings"
-        >Параметры</button>
-
-        <button
-          id="lua-script-tab"
-          class="tab"
-          type="button"
-          role="tab"
-          aria-selected="false"
-          aria-controls="lua-script"
-          tabindex="-1"
-          data-lua-page="script"
-        >Полный Lua-скрипт</button>
-      </nav>
-
-      <section
-        id="lua-settings"
-        role="tabpanel"
-        aria-labelledby="lua-settings-tab"
-      >
-        <div class="panel">
-          <label for="lua-template-file">Загрузить оригинальный Lua-шаблон</label>
-          <input id="lua-template-file" type="file" accept=".lua,text/plain">
-          <p id="template-status" class="hint" role="status"></p>
-        </div>
-
-        <div class="panel">
-          <label for="switch-count">Количество тумблеров</label>
-          <select id="switch-count">
-            <option value="1">1 тумблер — шаг +1</option>
-            <option value="2">2 тумблера — шаг +1 / шаг −1</option>
-          </select>
-          <div class="two-columns switch-columns">
-            <div class="rule-card">
-              <h3>Шаг +1</h3>
-
-              <label>
-                Название переключателя
-                <select id="inc-switch"></select>
-              </label>
-
-              <label>
-                Положение
-                <select id="inc-state">
-                  <option value="up">Верхнее</option>
-                  <option value="mid">Среднее</option>
-                  <option value="down">Нижнее</option>
-                </select>
-              </label>
-            </div>
-
-            <div id="dec-settings" class="rule-card" hidden>
-              <h3>Шаг −1</h3>
-
-              <label>
-                Название переключателя
-                <select id="dec-switch"></select>
-              </label>
-
-              <label>
-                Положение
-                <select id="dec-state">
-                  <option value="up">Верхнее</option>
-                  <option value="mid">Среднее</option>
-                  <option value="down" selected>Нижнее</option>
-                </select>
-              </label>
-            </div>
-          </div>
-
-          <div class="form-grid settings-bottom">
-            <label class="check">
-              <input id="lua-hold" type="checkbox">
-              <span>Автошаг при удержании</span>
-            </label>
-
-            <label>
-              Задержка, секунд
-              <input
-                id="lua-delay"
-                type="number"
-                min="0.1"
-                step="0.1"
-                value="3"
-                disabled
-              >
-            </label>
-
-            <label class="check">
-              <input id="lua-voice" type="checkbox" checked>
-              <span>Озвучка</span>
-            </label>
-          </div>
-        </div>
-
-        <p class="hint">
-          Каждое VTX-правило становится отдельной позицией Lua:
-          сначала мощности, затем каналы. CHANNELS содержит физические
-          номера каналов: AUX1 → CH5. FREQUENCIES всегда заполнен нулями.
-        </p>
-      </section>
-
-      <section
-        id="lua-script"
-        role="tabpanel"
-        aria-labelledby="lua-script-tab"
-        hidden
-      >
-        <textarea
-          id="lua-output"
-          class="code-output lua-output"
-          readonly
-          spellcheck="false"
-          aria-label="Полный Lua-скрипт"
-        ></textarea>
-      </section>
-
-      <div id="lua-errors" class="notice error" role="alert" hidden></div>
-    </div>
-
-    <div class="modal-footer">
-      <span id="lua-summary" class="muted"></span>
-      <button id="copy-lua" class="button primary" type="button">
-        Скопировать скрипт
-      </button>
-    </div>
-  </dialog>
-
-  <div id="toast" class="toast" role="status" hidden></div>
+    </section>
+  </main>
 </body>
 </html>
