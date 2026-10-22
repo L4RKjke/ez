@@ -56,11 +56,6 @@ button {
   cursor: pointer;
 }
 
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.65;
-}
-
 a {
   color: var(--accent);
 }
@@ -175,7 +170,6 @@ h1 {
 }
 
 /* Поиск и фильтры */
-
 .toolbar {
   display: flex;
   gap: 12px;
@@ -231,37 +225,65 @@ h1 {
 }
 
 .vtx-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    align-items: flex-end;
-    margin: 16px 0;
-    padding: 16px;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    background: #fff;
-    color: #222;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 6px;
+
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: 54px;
+  max-height: 54px;
+  margin: 12px 0;
+  padding: 6px 8px;
+
+  border: 1px solid var(--border, #ddd);
+  border-radius: 12px;
+  background: var(--surface, #fff);
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
 }
 
-.vtx-filters__field {
-    display: flex;
-    flex: 1 1 180px;
-    flex-direction: column;
-    gap: 6px;
+.vtx-filters__select {
+  box-sizing: border-box;
+  flex: 1 0 120px;
+  width: 0;
+  min-width: 120px;
+  min-height: 0;
+  height: 34px;
+  margin: 0;
+  padding: 0 6px;
+
+  border: 1px solid var(--border, #ddd);
+  border-radius: 7px;
+  background: var(--surface, #fff);
+  color: var(--text, #222);
+
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
 }
 
-.vtx-filters__select,
-.vtx-filters__reset {
-    min-height: 42px;
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background: #fff;
-    color: #222;
-    font: inherit;
+.vtx-filters__select:focus-visible {
+  outline: 2px solid #a4b1ff;
+  outline-offset: 1px;
 }
-.vtx-filters__reset {
-    cursor: pointer;
+
+.filter-button {
+  cursor: pointer;
+}
+
+.filter-button[aria-expanded="true"] {
+  border-color: #a4b1ff;
+  box-shadow: 0 0 0 3px rgba(100, 117, 235, 0.1);
+}
+
+.vtx-filters[hidden],
+.vtx-card.vtx-filtered-out {
+  display: none !important;
 }
 
 .vtx-filters[hidden],
@@ -270,7 +292,7 @@ h1 {
 #empty-state[hidden] {
     display: none !important;
 }
-
+/* конец Сетка карточек */
 
 .catalog-meta {
   margin-bottom: 18px;

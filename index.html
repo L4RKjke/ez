@@ -108,10 +108,13 @@
           >
         </label>
 
-        <button
+       <button
           class="filter-button"
           type="button"
-          title="Фильтры будут добавлены позже"
+          title="Фильтры"
+          aria-expanded="false"
+          aria-controls="vtx-filters"
+>
         >
           <svg
             width="18"
@@ -146,6 +149,48 @@
 
           Фильтры
         </button>
+      </div>
+      
+            <div
+        id="vtx-filters"
+        class="vtx-filters"
+        role="group"
+        aria-label="Фильтры каталога"
+        hidden
+      >
+        <select
+          class="vtx-filters__select"
+          data-filter="protocol"
+          aria-label="Протокол"
+        >
+          <option value="">Протокол: все</option>
+          <option value="SmartAudio">SmartAudio</option>
+          <option value="IRC Tramp">IRC Tramp</option>
+        </select>
+
+        <select
+          class="vtx-filters__select"
+          data-filter="power"
+          aria-label="Мощность"
+        >
+          <option value="">Мощность: все</option>
+        </select>
+
+        <select
+          class="vtx-filters__select"
+          data-filter="channels"
+          aria-label="Каналы"
+        >
+          <option value="">Каналы: все</option>
+        </select>
+
+        <select
+          class="vtx-filters__select"
+          data-filter="band"
+          aria-label="Диапазон"
+        >
+          <option value="">Диапазон: все</option>
+        </select>
       </div>
 
       <div
@@ -297,5 +342,17 @@
       </div>
     </section>
   </main>
+  <script>
+  const filterButton = document.querySelector(".filter-button");
+  const filtersPanel = document.getElementById("vtx-filters");
+
+  filterButton.addEventListener("click", () => {
+    const isExpanded =
+      filterButton.getAttribute("aria-expanded") === "true";
+
+    filterButton.setAttribute("aria-expanded", String(!isExpanded));
+    filtersPanel.hidden = isExpanded;
+  });
+</script>
 </body>
 </html>
