@@ -25,7 +25,7 @@ function initTabs() {
   });
 
   // Раздел по умолчанию.
-  activateSection("catalog");
+  activateSection("configuration");
 }
 
 if (document.readyState === "loading") {
