@@ -28,17 +28,8 @@ body {
     sans-serif;
   color: var(--text);
   background:
-    radial-gradient(
-      ellipse at 10% 0%,
-      #e9edff 0%,
-      transparent 45%
-    ),
-    radial-gradient(
-      ellipse at 95% 20%,
-      #e8f7f6 0%,
-      transparent 40%
-    ),
-    var(--bg);
+    radial-gradient(ellipse at 10% 0%, #e9edff 0%, transparent 45%),
+    radial-gradient(ellipse at 95% 20%, #e8f7f6 0%, transparent 40%), var(--bg);
 }
 
 button,
@@ -290,7 +281,7 @@ h1 {
 #vtx-cards .vtx-card[hidden],
 .vtx-cards .vtx-card[hidden],
 #empty-state[hidden] {
-    display: none !important;
+  display: none !important;
 }
 /* конец Сетка карточек */
 
@@ -309,7 +300,6 @@ h1 {
 }
 
 /* Карточка видеопередатчика */
-
 
 /* Планшеты */
 
@@ -613,7 +603,11 @@ h1 {
   border-radius: 8px;
   background: var(--vtx-surface);
   color: var(--vtx-text);
-  font: 11px/1.6 ui-monospace, SFMono-Regular, Consolas, monospace;
+  font:
+    11px/1.6 ui-monospace,
+    SFMono-Regular,
+    Consolas,
+    monospace;
   white-space: pre;
   user-select: text;
 }
@@ -654,7 +648,8 @@ h1 {
   .vtx-grid {
     grid-template-columns: minmax(0, 1fr);
   }
-}.vtx-card__pinout {
+}
+.vtx-card__pinout {
   display: grid;
   place-items: center;
   min-height: 110px;
@@ -729,17 +724,8 @@ h1 {
 
 [data-theme="dark"] body {
   background:
-    radial-gradient(
-      ellipse at 10% 0%,
-      #202847 0%,
-      transparent 45%
-    ),
-    radial-gradient(
-      ellipse at 95% 20%,
-      #163135 0%,
-      transparent 40%
-    ),
-    var(--bg);
+    radial-gradient(ellipse at 10% 0%, #202847 0%, transparent 45%),
+    radial-gradient(ellipse at 95% 20%, #163135 0%, transparent 40%), var(--bg);
 }
 
 [data-theme="dark"] .header {
@@ -785,12 +771,7 @@ h1 {
 }
 
 [data-theme="dark"] .card-visual {
-  background: linear-gradient(
-    145deg,
-    #252c41,
-    #1d2533 60%,
-    #203739
-  );
+  background: linear-gradient(145deg, #252c41, #1d2533 60%, #203739);
 }
 
 /* Светлое оформление карточек */
@@ -892,7 +873,6 @@ h1 {
 .vtx-card a {
   color: var(--vtx-accent);
 }
-
 
 /* Светлая тема и цвета по умолчанию */
 .vtx-card {

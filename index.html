@@ -1,358 +1,339 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="light dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
 
-  <title>VTX — каталог видеопередатчиков</title>
+    <title>VTX — каталог видеопередатчиков</title>
 
-  <link rel="stylesheet" href="style.css">
-  <script src="color-scheme.js" defer></script>
-  <script src="catalog.js" defer></script>
-</head>
+    <link rel="stylesheet" href="style.css" />
+    <script src="color-scheme.js" defer></script>
+     <!-- Каталог -->
+    <script src="catalog.js" defer></script>
+    <script src="catalog-search.js" defer></script>
+  </head>
 
-<body>
-  <header class="header">
-    <div class="container header-inner">
-      <div class="brand" aria-label="VTX">
-        <span class="brand-icon" aria-hidden="true">
-          <svg width="21" height="21" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M5 8a10 10 0 0 1 14 0M8 11a6 6 0 0 1 8 0M11 14a2 2 0 0 1 2 0"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
-            <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
-          </svg>
-        </span>
+  <body>
+    <header class="header">
+      <div class="container header-inner">
+        <div class="brand" aria-label="VTX">
+          <span class="brand-icon" aria-hidden="true">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M5 8a10 10 0 0 1 14 0M8 11a6 6 0 0 1 8 0M11 14a2 2 0 0 1 2 0"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <circle cx="12" cy="18" r="1.5" fill="currentColor" />
+            </svg>
+          </span>
 
-        VTX
-      </div>
-
-      <nav class="navigation" aria-label="Основные разделы">
-        <button
-          class="nav-button"
-          type="button"
-          data-section="catalog"
-          aria-controls="catalog"
-          aria-pressed="true"
-        >
-          Каталог
-        </button>
-
-        <button
-          class="nav-button"
-          type="button"
-          data-section="configuration"
-          aria-controls="configuration"
-          aria-pressed="false"
-        >
-          Конфигурация
-        </button>
-      </nav>
-      <button
-        id="theme-toggle"
-        class="theme-toggle"
-        type="button"
-        aria-label="Включить тёмную тему"
-      >
-        <span id="theme-icon" aria-hidden="true">🌙</span>
-        <span id="theme-label">Тёмная тема</span>
-      </button>
-    </div>
-  </header>
-
-  <main class="container">
-    <!-- Каталог -->
-    <section id="catalog" aria-labelledby="catalog-title">
-      <p class="eyebrow">Оборудование / VTX</p>
-
-      <h1 id="catalog-title">Видеопередатчики</h1>
-
-      <p class="intro">
-        Характеристики, распиновка и конфигурации — в одном месте.
-      </p>
-
-      <div class="toolbar">
-        <label class="search">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            aria-hidden="true"
-          >
-            <circle
-              cx="10.5"
-              cy="10.5"
-              r="6.5"
-              stroke="currentColor"
-              stroke-width="1.7"
-            />
-            <path
-              d="m16 16 4 4"
-              stroke="currentColor"
-              stroke-width="1.7"
-              stroke-linecap="round"
-            />
-          </svg>
-
-          <input
-            id="search"
-            type="search"
-            placeholder="Поиск по названию..."
-            aria-label="Поиск видеопередатчика по названию"
-            autocomplete="off"
-          >
-        </label>
-
-       <button
-          class="filter-button"
-          type="button"
-          title="Фильтры"
-          aria-expanded="false"
-          aria-controls="vtx-filters"
->
-        >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            aria-hidden="true"
-          >
-            <path
-              d="M4 7h16M4 17h16"
-              stroke="currentColor"
-              stroke-width="1.7"
-              stroke-linecap="round"
-            />
-            <circle
-              cx="9"
-              cy="7"
-              r="3"
-              fill="white"
-              stroke="currentColor"
-              stroke-width="1.7"
-            />
-            <circle
-              cx="15"
-              cy="17"
-              r="3"
-              fill="white"
-              stroke="currentColor"
-              stroke-width="1.7"
-            />
-          </svg>
-
-          Фильтры
-        </button>
-      </div>
-      
-            <div
-        id="vtx-filters"
-        class="vtx-filters"
-        role="group"
-        aria-label="Фильтры каталога"
-        hidden
-      >
-        <select
-          class="vtx-filters__select"
-          data-filter="protocol"
-          aria-label="Протокол"
-        >
-          <option value="">Протокол: все</option>
-          <option value="SmartAudio">SmartAudio</option>
-          <option value="IRC Tramp">IRC Tramp</option>
-        </select>
-
-        <select
-          class="vtx-filters__select"
-          data-filter="power"
-          aria-label="Мощность"
-        >
-          <option value="">Мощность: все</option>
-        </select>
-
-        <select
-          class="vtx-filters__select"
-          data-filter="channels"
-          aria-label="Каналы"
-        >
-          <option value="">Каналы: все</option>
-        </select>
-
-        <select
-          class="vtx-filters__select"
-          data-filter="band"
-          aria-label="Диапазон"
-        >
-          <option value="">Диапазон: все</option>
-        </select>
-      </div>
-
-      <div
-        id="catalog-count"
-        class="catalog-meta"
-        role="status"
-      ></div>
-
-      <!-- Карточки  -->
-    <section class="vtx-catalog" aria-label="Каталог видеопередатчиков">
-  <p
-    id="vtx-catalog-status"
-    class="vtx-catalog__status"
-    role="status"
-    aria-live="polite"
-  ></p>
-
-  <div id="vtx-cards" class="vtx-grid"></div>
-</section>
-
-<template id="vtx-card-template">
-  <article class="vtx-card">
-    <div class="vtx-card__photo">
-      <span class="vtx-card__placeholder">Нет фото</span>
-      <img class="vtx-card__image" alt="" loading="lazy" decoding="async">
-    </div>
-
-    <header class="vtx-card__header">
-      <h3 class="vtx-card__title"></h3>
-      <div class="vtx-card__badges"></div>
-    </header>
-
-    <div class="vtx-card__tabs" role="tablist" aria-label="Данные видеопередатчика">
-      <button
-        class="vtx-card__tab"
-        type="button"
-        role="tab"
-        aria-selected="true"
-        data-tab="description"
-      >
-        Описание
-      </button>
-
-      <button
-        class="vtx-card__tab"
-        type="button"
-        role="tab"
-        aria-selected="false"
-        tabindex="-1"
-        data-tab="connection"
-      >
-        Подключение / CLI
-      </button>
-    </div>
-
-    <div class="vtx-card__content">
-      <section
-        class="vtx-card__panel"
-        role="tabpanel"
-        tabindex="0"
-        data-panel="description"
-      >
-        <dl class="vtx-card__specs"></dl>
-      </section>
-
-      <section
-        class="vtx-card__panel"
-        role="tabpanel"
-        tabindex="0"
-        data-panel="connection"
-        hidden
-      >  
-        <h4 class="vtx-card__subtitle">Распиновка</h4>
-
-        <div class="vtx-card__pinout">
-          <p class="vtx-card__pinout-placeholder">
-            Здесь будет фото распиновки
-          </p>
-
-          <!-- Для будущего изображения. Пока src не задан, запросов нет. -->
-          <img
-            class="vtx-card__pin-image"
-            alt="Схема распиновки видеопередатчика"
-            loading="lazy"
-            decoding="async"
-            hidden
-          >
+          VTX
         </div>
 
-
-        <div class="vtx-card__cli-header">
-          <h4 class="vtx-card__subtitle">CLI · vtxtable</h4>
+        <nav class="navigation" aria-label="Основные разделы">
           <button
-            class="vtx-card__copy"
+            class="nav-button"
             type="button"
-            disabled
+            data-section="catalog"
+            aria-controls="catalog"
+            aria-pressed="true"
           >
-            Скопировать CLI
+            Каталог
+          </button>
+
+          <button
+            class="nav-button"
+            type="button"
+            data-section="configuration"
+            aria-controls="configuration"
+            aria-pressed="false"
+          >
+            Конфигурация
+          </button>
+        </nav>
+        <button
+          id="theme-toggle"
+          class="theme-toggle"
+          type="button"
+          aria-label="Включить тёмную тему"
+        >
+          <span id="theme-icon" aria-hidden="true">🌙</span>
+          <span id="theme-label">Тёмная тема</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- Каталог -->
+      <section id="catalog" aria-labelledby="catalog-title">
+        <p class="eyebrow">Каталог</p>
+        <h1 id="catalog-title">Видеопередатчики</h1>
+
+        <p class="intro">
+          Характеристики, распиновка и конфигурации — в одном месте.
+        </p>
+
+        <div class="toolbar">
+          <label class="search">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle
+                cx="10.5"
+                cy="10.5"
+                r="6.5"
+                stroke="currentColor"
+                stroke-width="1.7"
+              />
+              <path
+                d="m16 16 4 4"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+              />
+            </svg>
+
+            <input
+              id="search"
+              type="search"
+              placeholder="Поиск по названию..."
+              aria-label="Поиск видеопередатчика по названию"
+              autocomplete="off"
+            />
+          </label>
+
+          <button
+            class="filter-button"
+            type="button"
+            title="Фильтры"
+            aria-expanded="false"
+            aria-controls="vtx-filters"
+          >
+            >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M4 7h16M4 17h16"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+              />
+              <circle
+                cx="9"
+                cy="7"
+                r="3"
+                fill="white"
+                stroke="currentColor"
+                stroke-width="1.7"
+              />
+              <circle
+                cx="15"
+                cy="17"
+                r="3"
+                fill="white"
+                stroke="currentColor"
+                stroke-width="1.7"
+              />
+            </svg>
+
+            Фильтры
           </button>
         </div>
 
-        <pre class="vtx-card__cli" tabindex="0"><code></code></pre>
+        <div
+          id="vtx-filters"
+          class="vtx-filters"
+          role="group"
+          aria-label="Фильтры каталога"
+          hidden
+        >
+          <select
+            class="vtx-filters__select"
+            data-filter="protocol"
+            aria-label="Протокол"
+          >
+            <option value="">Протокол: все</option>
+            <option value="SmartAudio">SmartAudio</option>
+            <option value="IRC Tramp">IRC Tramp</option>
+          </select>
 
-        <p class="vtx-card__notice">
-          Проверьте таблицу перед применением. Настройка UART и
-          протокола выполняется отдельно. Команда save не включена.
-        </p>
+          <select
+            class="vtx-filters__select"
+            data-filter="power"
+            aria-label="Мощность"
+          >
+            <option value="">Мощность: все</option>
+          </select>
 
-        <p
-          class="vtx-card__copy-status"
-          role="status"
-          aria-live="polite"
-        ></p>
+          <select
+            class="vtx-filters__select"
+            data-filter="channels"
+            aria-label="Каналы"
+          >
+            <option value="">Каналы: все</option>
+          </select>
+
+          <select
+            class="vtx-filters__select"
+            data-filter="band"
+            aria-label="Диапазон"
+          >
+            <option value="">Диапазон: все</option>
+          </select>
+        </div>
+
+        <div id="catalog-count" class="catalog-meta" role="status"></div>
+
+        <!-- Карточки  -->
+        <section class="vtx-catalog" aria-label="Каталог видеопередатчиков">
+          <p
+            id="vtx-catalog-status"
+            class="vtx-catalog__status"
+            role="status"
+            aria-live="polite"
+          ></p>
+
+          <div id="vtx-cards" class="vtx-grid"></div>
+        </section>
+
+        <template id="vtx-card-template">
+          <article class="vtx-card">
+            <div class="vtx-card__photo">
+              <span class="vtx-card__placeholder">Нет фото</span>
+              <img
+                class="vtx-card__image"
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+
+            <header class="vtx-card__header">
+              <h3 class="vtx-card__title"></h3>
+              <div class="vtx-card__badges"></div>
+            </header>
+
+            <div
+              class="vtx-card__tabs"
+              role="tablist"
+              aria-label="Данные видеопередатчика"
+            >
+              <button
+                class="vtx-card__tab"
+                type="button"
+                role="tab"
+                aria-selected="true"
+                data-tab="description"
+              >
+                Описание
+              </button>
+
+              <button
+                class="vtx-card__tab"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                tabindex="-1"
+                data-tab="connection"
+              >
+                Подключение / CLI
+              </button>
+            </div>
+
+            <div class="vtx-card__content">
+              <section
+                class="vtx-card__panel"
+                role="tabpanel"
+                tabindex="0"
+                data-panel="description"
+              >
+                <dl class="vtx-card__specs"></dl>
+              </section>
+
+              <section
+                class="vtx-card__panel"
+                role="tabpanel"
+                tabindex="0"
+                data-panel="connection"
+                hidden
+              >
+                <h4 class="vtx-card__subtitle">Распиновка</h4>
+
+                <div class="vtx-card__pinout">
+                  <p class="vtx-card__pinout-placeholder">
+                    Здесь будет фото распиновки
+                  </p>
+
+                  <!-- Для будущего изображения. Пока src не задан, запросов нет. -->
+                  <img
+                    class="vtx-card__pin-image"
+                    alt="Схема распиновки видеопередатчика"
+                    loading="lazy"
+                    decoding="async"
+                    hidden
+                  />
+                </div>
+
+                <div class="vtx-card__cli-header">
+                  <h4 class="vtx-card__subtitle">CLI · vtxtable</h4>
+                  <button class="vtx-card__copy" type="button" disabled>
+                    Скопировать CLI
+                  </button>
+                </div>
+
+                <pre class="vtx-card__cli" tabindex="0"><code></code></pre>
+
+                <p class="vtx-card__notice">
+                  Проверьте таблицу перед применением. Настройка UART и
+                  протокола выполняется отдельно. Команда save не включена.
+                </p>
+
+                <p
+                  class="vtx-card__copy-status"
+                  role="status"
+                  aria-live="polite"
+                ></p>
+              </section>
+            </div>
+
+            <footer class="vtx-card__footer">
+              <button class="vtx-card__config" type="button" disabled>
+                Посмотреть конфигурацию
+              </button>
+            </footer>
+          </article>
+        </template>
+
+        <div id="no-results" class="empty-state" hidden>
+          <h2>Ничего не найдено</h2>
+          <p>Попробуйте изменить название в поиске.</p>
+        </div>
       </section>
-    </div>
 
-    <footer class="vtx-card__footer">
-      <button class="vtx-card__config" type="button" disabled>
-        Посмотреть конфигурацию
-      </button>
-    </footer>
-  </article>
-</template>
+      <!-- Конфигурация -->
+      <section id="configuration" aria-labelledby="configuration-title" hidden>
+        <p class="eyebrow">Настройки / VTX</p>
+        <h1 id="configuration-title">Конфигурация</h1>
 
+        <p class="intro">Пространство для настройки вашего видеопередатчика.</p>
 
-
-      <div id="no-results" class="empty-state" hidden>
-        <h2>Ничего не найдено</h2>
-        <p>Попробуйте изменить название в поиске.</p>
-      </div>
-    </section>
-
-    <!-- Конфигурация -->
-    <section
-      id="configuration"
-      aria-labelledby="configuration-title"
-      hidden
-    >
-      <p class="eyebrow">Настройки / VTX</p>
-      <h1 id="configuration-title">Конфигурация</h1>
-
-      <p class="intro">
-        Пространство для настройки вашего видеопередатчика.
-      </p>
-
-      <div class="empty-state configuration-placeholder">
-        <h2>Здесь будут конфигурации</h2>
-        <p>Раздел пока находится в разработке.</p>
-      </div>
-    </section>
-  </main>
-  <script>
-  const filterButton = document.querySelector(".filter-button");
-  const filtersPanel = document.getElementById("vtx-filters");
-
-  filterButton.addEventListener("click", () => {
-    const isExpanded =
-      filterButton.getAttribute("aria-expanded") === "true";
-
-    filterButton.setAttribute("aria-expanded", String(!isExpanded));
-    filtersPanel.hidden = isExpanded;
-  });
-</script>
-</body>
+        <div class="empty-state configuration-placeholder">
+          <h2>Здесь будут конфигурации</h2>
+          <p>Раздел пока находится в разработке.</p>
+        </div>
+      </section>
+    </main>
+  </body>
 </html>

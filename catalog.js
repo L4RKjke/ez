@@ -13,7 +13,7 @@
     "Коннектор",
     "Основной цвет",
     "Дополнительный цвет",
-    "Индикация"
+    "Индикация",
   ];
 
   function element(tag, className, text) {
@@ -26,9 +26,7 @@
   }
 
   function isObject(value) {
-    return value !== null &&
-      typeof value === "object" &&
-      !Array.isArray(value);
+    return value !== null && typeof value === "object" && !Array.isArray(value);
   }
 
   async function loadJSON(url) {
@@ -48,14 +46,22 @@
   }
 
   function loadImage(image, url, onError, onLoad) {
-    image.addEventListener("error", () => {
-      image.hidden = true;
-      if (onError) onError();
-    }, { once: true });
+    image.addEventListener(
+      "error",
+      () => {
+        image.hidden = true;
+        if (onError) onError();
+      },
+      { once: true },
+    );
 
-    image.addEventListener("load", () => {
-      if (onLoad) onLoad();
-    }, { once: true });
+    image.addEventListener(
+      "load",
+      () => {
+        if (onLoad) onLoad();
+      },
+      { once: true },
+    );
 
     image.src = url;
   }
@@ -104,12 +110,12 @@
         !Array.isArray(frequencies) ||
         frequencies.length !== channels ||
         !frequencies.every(
-          (frequency) => Number.isInteger(frequency) && frequency >= 0
+          (frequency) => Number.isInteger(frequency) && frequency >= 0,
         )
       ) {
         throw new Error(
           "В диапазонах должны быть одинаковое число каналов " +
-          "и целочисленные частоты."
+            "и целочисленные частоты.",
         );
       }
 
@@ -119,14 +125,12 @@
       // Проверки также исключают внедрение дополнительных CLI-команд.
       if (!/^[A-Z0-9_-]{1,8}$/.test(name)) {
         throw new Error(
-          `Название диапазона ${index + 1}: требуется 1–8 символов A–Z, 0–9, _ или -.`
+          `Название диапазона ${index + 1}: требуется 1–8 символов A–Z, 0–9, _ или -.`,
         );
       }
 
       if (!/^[A-Z]$/.test(letter)) {
-        throw new Error(
-          `Буква диапазона ${index + 1} должна быть от A до Z.`
-        );
+        throw new Error(`Буква диапазона ${index + 1} должна быть от A до Z.`);
       }
 
       return [
@@ -135,7 +139,7 @@
         name,
         letter,
         "CUSTOM",
-        ...frequencies
+        ...frequencies,
       ].join(" ");
     });
 
@@ -155,7 +159,7 @@
 
       if (!/^[a-zA-Z0-9_-]{1,3}$/.test(label)) {
         throw new Error(
-          "Метка мощности должна содержать 1–3 символа без пробелов."
+          "Метка мощности должна содержать 1–3 символа без пробелов.",
         );
       }
 
@@ -169,7 +173,7 @@
       ...bandLines,
       `vtxtable powerlevels ${powers.length}`,
       `vtxtable powervalues ${values.join(" ")}`,
-      `vtxtable powerlabels ${labels.join(" ")}`
+      `vtxtable powerlabels ${labels.join(" ")}`,
     ].join("\n");
   }
 
@@ -186,8 +190,7 @@
       }
 
       for (const panel of panels) {
-        panel.hidden =
-          panel.dataset.panel !== selectedTab.dataset.tab;
+        panel.hidden = panel.dataset.panel !== selectedTab.dataset.tab;
       }
 
       if (focus) selectedTab.focus();
@@ -195,7 +198,7 @@
 
     tabs.forEach((tab, index) => {
       const panel = panels.find(
-        (item) => item.dataset.panel === tab.dataset.tab
+        (item) => item.dataset.panel === tab.dataset.tab,
       );
 
       tab.id = `${id}-tab-${index}`;
@@ -279,16 +282,12 @@
       description,
       config,
       descriptionError,
-      configError
+      configError,
     } = item;
 
-    const card = template.content
-      .querySelector(".vtx-card")
-      .cloneNode(true);
+    const card = template.content.querySelector(".vtx-card").cloneNode(true);
 
-    const fallbackName = folder
-      .replace(/^\d+_/, "")
-      .replace(/_/g, " ");
+    const fallbackName = folder.replace(/^\d+_/, "").replace(/_/g, " ");
 
     const name =
       typeof description["Название"] === "string" &&
@@ -310,8 +309,12 @@
     loadImage(
       image,
       fileURL(folderURL, photo),
-      () => { placeholder.hidden = false; },
-      () => { placeholder.hidden = true; }
+      () => {
+        placeholder.hidden = false;
+      },
+      () => {
+        placeholder.hidden = true;
+      },
     );
 
     // Краткие характеристики под названием.
@@ -346,10 +349,7 @@
 
       const row = element("div", "vtx-card__spec-row");
 
-      row.append(
-        element("dt", "", key),
-        element("dd", "", value)
-      );
+      row.append(element("dt", "", key), element("dd", "", value));
 
       specs.append(row);
     }
@@ -363,8 +363,8 @@
           "vtx-card__notice",
           descriptionError
             ? "Не удалось загрузить описание."
-            : "Описание пока не добавлено."
-        )
+            : "Описание пока не добавлено.",
+        ),
       );
     }
 
@@ -372,7 +372,6 @@
     // Распиновка пока отображается как HTML-заглушка.
     // описание.json для неё не используется.
     // Изображение распиновки пока не загружаем.
-
 
     // CLI из vtx конфиг.json.
     const code = card.querySelector(".vtx-card__cli code");
@@ -403,24 +402,23 @@
     // Для подключения существующего поиска.
     card.dataset.search = [
       name,
-      ...specFields.map((key) => description[key] ?? "")
-    ].join(" ").toLowerCase();
+      ...specFields.map((key) => description[key] ?? ""),
+    ]
+      .join(" ")
+      .toLowerCase();
 
     return {
       card,
-      hasError: Boolean(descriptionError || cliError)
+      hasError: Boolean(descriptionError || cliError),
     };
   }
 
   async function loadCatalogItem(folder) {
-    const folderURL = new URL(
-      `${encodeURIComponent(folder)}/`,
-      catalogURL
-    );
+    const folderURL = new URL(`${encodeURIComponent(folder)}/`, catalogURL);
 
     const [descriptionResult, configResult] = await Promise.allSettled([
       loadJSON(fileURL(folderURL, "описание.json")),
-      loadJSON(fileURL(folderURL, "vtx конфиг.json"))
+      loadJSON(fileURL(folderURL, "vtx конфиг.json")),
     ]);
 
     const descriptionValid =
@@ -428,8 +426,7 @@
       isObject(descriptionResult.value);
 
     const configValid =
-      configResult.status === "fulfilled" &&
-      isObject(configResult.value);
+      configResult.status === "fulfilled" && isObject(configResult.value);
 
     const descriptionError = descriptionValid
       ? null
@@ -453,7 +450,7 @@
       description: descriptionValid ? descriptionResult.value : {},
       config: configValid ? configResult.value : null,
       descriptionError,
-      configError
+      configError,
     };
   }
 
@@ -478,19 +475,17 @@
             folder.trim() !== "" &&
             folder !== "." &&
             folder !== ".." &&
-            !/[\\/]/.test(folder)
+            !/[\\/]/.test(folder),
         )
       ) {
-        throw new Error(
-          "index.json должен содержать массив имён папок."
-        );
+        throw new Error("index.json должен содержать массив имён папок.");
       }
 
       const folders = [...new Set(index)];
 
       // Загрузка параллельная, порядок остаётся как в index.json.
       const items = await Promise.all(
-        folders.map((folder) => loadCatalogItem(folder))
+        folders.map((folder) => loadCatalogItem(folder)),
       );
 
       const fragment = document.createDocumentFragment();
@@ -509,8 +504,7 @@
         status.textContent = "Каталог пока пуст.";
       } else if (errors) {
         status.textContent =
-          `Карточек: ${items.length}. ` +
-          `С неполными данными: ${errors}.`;
+          `Карточек: ${items.length}. ` + `С неполными данными: ${errors}.`;
       } else {
         status.textContent = "";
       }
@@ -520,9 +514,9 @@
           bubbles: true,
           detail: {
             count: items.length,
-            errors
-          }
-        })
+            errors,
+          },
+        }),
       );
     } catch (error) {
       console.error("Ошибка каталога:", error);
@@ -535,91 +529,17 @@
     }
   }
 
-// Поиск
-// Поиск с поддержкой динамической загрузки каталога
-function normalizeCatalogText(text) {
-    return String(text ?? "")
-        .toLocaleLowerCase("ru-RU")
-        .replace(/ё/g, "е")
-        .replace(/\s+/g, " ")
-        .trim();
-}
-
-function filterCatalog() {
-    // Получаем актуальные элементы после загрузки или перерисовки.
-    const catalogSearch = document.getElementById("search");
-    const catalogContainer = document.getElementById("vtx-cards");
-    const catalogEmpty = document.getElementById("empty-state");
-    
-    if (!catalogSearch || !catalogContainer) return;
-
-    const query = normalizeCatalogText(catalogSearch.value);
-    const cards = catalogContainer.querySelectorAll(".vtx-card");
-
-    let visibleCount = 0;
-
-    cards.forEach((card) => {
-        const title = card.querySelector("h3")?.textContent ?? "";
-        const matches = normalizeCatalogText(title).includes(query);
-
-        card.hidden = !matches;
-
-        if (matches) {
-            visibleCount++;
-        }
-    });
-
-    if (catalogEmpty) {
-        catalogEmpty.hidden = visibleCount > 0 || query === "";
-    }
-}
-
-// Делегирование: работает, даже если поле появится позже
-// или будет заменено при перерисовке.
-document.addEventListener("input", (event) => {
-    if (!(event.target instanceof Element)) return;
-    if (!event.target.matches("#search")) return;
-
-    filterCatalog();
-});
-
-// Объединяем изменения DOM в один запуск фильтрации за кадр.
-let catalogFilterScheduled = false;
-
-function scheduleCatalogFilter() {
-    if (catalogFilterScheduled) return;
-
-    catalogFilterScheduled = true;
-
-    requestAnimationFrame(() => {
-        catalogFilterScheduled = false;
-        filterCatalog();
-    });
-}
-
-// Повторяем поиск при добавлении карточек, поля или контейнера,
-// а также при изменении текста названий.
-const catalogObserver = new MutationObserver(scheduleCatalogFilter);
-
-catalogObserver.observe(document, {
-    childList: true,
-    subtree: true,
-    characterData: true
-    // Атрибуты не отслеживаем: изменение hidden
-    // не должно запускать фильтрацию по кругу.
-});
-
-filterCatalog();
-
-// фильтры
-
-
-if (document.readyState === "loading") {
-document.addEventListener("DOMContentLoaded", initCatalog, {
-    once: true
-});
-} else {
-initCatalog();
-}
-
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+        initCatalog();
+      },
+      {
+        once: true,
+      },
+    );
+  } else {
+    initCatalog();
+  }
 })();
