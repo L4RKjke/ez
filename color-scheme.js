@@ -27,7 +27,7 @@ if (!toggle || !icon || !label) return;
     root.dataset.theme = theme;
 
     icon.textContent = isDark ? "☀️" : "🌙";
-    label.textContent = isDark ? "Светлая тема" : "Тёмная тема";
+    label.textContent = isDark ? "День" : "Ночь";
 
     toggle.setAttribute(
       "aria-label",
