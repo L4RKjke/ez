@@ -1,0 +1,1465 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Редактор VTX-каталога</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: system-ui, sans-serif;
+      background: #10141d;
+      color: #e8edf5;
+    }
+
+    * { box-sizing: border-box; }
+
+    body { margin: 0; }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid #3a475f;
+      border-radius: 8px;
+      padding: 9px 13px;
+      background: #26334b;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    button:hover { background: #344767; }
+    button:disabled { opacity: .5; cursor: wait; }
+
+    .primary { background: #176340; }
+    .primary:hover { background: #207f54; }
+
+    .danger { background: #6d2934; }
+    .danger:hover { background: #8c3442; }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid #3a475f;
+      border-radius: 7px;
+      padding: 10px;
+      background: #111925;
+      color: #e8edf5;
+    }
+
+    input:disabled { opacity: .6; }
+
+    textarea {
+      resize: vertical;
+      line-height: 1.5;
+      tab-size: 2;
+    }
+
+    fieldset {
+      border: 0;
+      margin: 0;
+      padding: 0;
+      min-width: 0;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      padding: 18px 22px;
+      background: #192231;
+      border-bottom: 1px solid #303c50;
+    }
+
+    h1 { font-size: 21px; margin: 0 auto 0 0; }
+    h2 { font-size: 18px; margin: 0 0 16px; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+      min-height: calc(100vh - 82px);
+    }
+
+    aside {
+      padding: 18px;
+      border-right: 1px solid #303c50;
+      background: #151d29;
+    }
+
+    main {
+      max-width: 1250px;
+      width: 100%;
+      padding: 22px;
+    }
+
+    .card {
+      display: block;
+      width: 100%;
+      text-align: left;
+      margin-top: 9px;
+      background: #1d293b;
+      overflow-wrap: anywhere;
+    }
+
+    .card.active {
+      outline: 2px solid #66b5ff;
+    }
+
+    .card small {
+      display: block;
+      color: #a4b3c8;
+      margin-top: 5px;
+    }
+
+    .panel {
+      padding: 18px;
+      margin-bottom: 18px;
+      border: 1px solid #303c50;
+      border-radius: 12px;
+      background: #192231;
+    }
+
+    .row {
+      display: flex;
+      align-items: end;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .row > label { flex: 1; min-width: 180px; }
+
+    label {
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    label > span {
+      display: block;
+      margin-bottom: 7px;
+      color: #c7d4e5;
+    }
+
+    .hint {
+      color: #9caec4;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .mono {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 14px;
+    }
+
+    #cli { min-height: 330px; }
+    #description { min-height: 340px; }
+
+    .images {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .preview {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 250px;
+      margin-bottom: 12px;
+      border: 1px dashed #46556c;
+      border-radius: 9px;
+      overflow: hidden;
+      background: #101722;
+      color: #8fa2bc;
+    }
+
+    .preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    #status {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      padding: 12px 22px;
+      border-top: 1px solid #303c50;
+      color: #bcd2ed;
+    }
+
+    #status.error { color: #ff9c9c; }
+
+    [hidden] { display: none !important; }
+
+    @media (max-width: 850px) {
+      .layout { grid-template-columns: 1fr; }
+      aside {
+        border-right: 0;
+        border-bottom: 1px solid #303c50;
+      }
+      .images { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <fieldset id="app">
+    <header>
+      <h1>Редактор VTX-каталога</h1>
+      <span id="folderLabel" class="hint">Папка не выбрана</span>
+      <button id="openFolder">Открыть vtx_catalog</button>
+    </header>
+
+    <div class="layout">
+      <aside>
+        <div class="actions">
+          <button id="newCard">+ Добавить</button>
+          <button id="refresh">Обновить список</button>
+        </div>
+
+        <input id="search" placeholder="Поиск карточки">
+        <div id="list"></div>
+      </aside>
+
+      <main>
+        <div id="empty" class="panel">
+          Откройте папку vtx_catalog и выберите карточку
+          либо создайте новую.
+        </div>
+
+        <div id="editor" hidden>
+          <div class="actions">
+            <button id="save" class="primary">Сохранить</button>
+            <button id="delete" class="danger">Удалить из каталога</button>
+            <span id="dirtyLabel" class="hint"></span>
+          </div>
+
+          <section class="panel">
+            <h2>Карточка</h2>
+            <label>
+              <span>Имя папки</span>
+              <input id="directory"
+                     placeholder="004_My_VTX"
+                     autocomplete="off">
+            </label>
+            <div class="hint">
+              Имя папки существующей карточки не меняется.
+              Название устройства редактируется в описании.
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2>VTX-конфигурация</h2>
+
+            <div class="row">
+              <label>
+                <span>Редактируемый профиль</span>
+                <select id="profile"></select>
+              </label>
+
+              <label>
+                <span>Протокол по умолчанию</span>
+                <select id="defaultProtocol"></select>
+              </label>
+
+              <button id="addProfile">+ Профиль</button>
+            </div>
+
+            <label>
+              <span>CLI Betaflight</span>
+              <textarea id="cli"
+                        class="mono"
+                        spellcheck="false"></textarea>
+            </label>
+
+            <label>
+              <span>
+                Реальная мощность, мВт — по одному значению
+                для каждого powerlevel
+              </span>
+              <input id="mw"
+                     class="mono"
+                     placeholder="25, 400, 1000, 2500">
+            </label>
+
+            <p class="hint">
+              Поле mw отсутствует в командах Betaflight, поэтому
+              редактируется отдельно. Числа здесь должны соответствовать
+              порядку уровней мощности в CLI.
+            </p>
+
+            <p class="hint">
+              Диапазоны и частоты общие для всех профилей.
+              Команды powervalues и powerlabels относятся к выбранному
+              профилю. Выбор протокола здесь — метаданные каталога,
+              а не настройка UART полётного контроллера.
+            </p>
+
+            <button id="downloadCli">Скачать CLI .txt</button>
+          </section>
+
+          <section class="panel">
+            <h2>Описание</h2>
+
+            <textarea id="description"
+                      class="mono"
+                      spellcheck="false"></textarea>
+
+            <p class="hint">
+              JSON-объект со строковыми значениями.
+              Можно добавлять собственные поля.
+            </p>
+          </section>
+
+          <section class="panel">
+            <h2>Изображения</h2>
+
+            <div class="images">
+              <div>
+                <label><span>фото.webp</span></label>
+                <div id="photoPreview" class="preview"></div>
+                <input id="photoFile" type="file" accept="image/*">
+                <button id="removePhoto" style="margin-top:10px">
+                  Удалить фото
+                </button>
+              </div>
+
+              <div>
+                <label><span>распиновка.webp</span></label>
+                <div id="pinPreview" class="preview"></div>
+                <input id="pinFile" type="file" accept="image/*">
+                <button id="removePin" style="margin-top:10px">
+                  Удалить распиновку
+                </button>
+              </div>
+            </div>
+
+            <p class="hint">
+              Изображения преобразуются в WebP при загрузке.
+              Отсутствие фотографии или распиновки допустимо.
+              Изменения записываются только кнопкой «Сохранить».
+            </p>
+          </section>
+        </div>
+      </main>
+    </div>
+  </fieldset>
+
+  <div id="status">Готово.</div>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+
+const FILES = {
+  config: "vtx конфиг.json",
+  description: "описание.json",
+  photo: "фото.webp",
+  pin: "распиновка.webp"
+};
+
+const state = {
+  root: null,
+  ids: [],
+  id: null,
+  isNew: false,
+  config: null,
+  profile: null,
+  dirty: false,
+  busy: false,
+  media: {
+    photo: { pending: undefined, url: null },
+    pin: { pending: undefined, url: null }
+  }
+};
+
+function status(message, error = false) {
+  $("status").textContent = message;
+  $("status").classList.toggle("error", error);
+}
+
+async function run(action) {
+  if (state.busy) return;
+
+  state.busy = true;
+  $("app").disabled = true;
+
+  try {
+    await action();
+  } catch (error) {
+    console.error(error);
+
+    if (error.name !== "AbortError") {
+      status(error.message || String(error), true);
+    }
+  } finally {
+    state.busy = false;
+    $("app").disabled = false;
+  }
+}
+
+function markDirty(value = true) {
+  state.dirty = value;
+  $("dirtyLabel").textContent =
+    value ? "Есть несохранённые изменения" : "";
+}
+
+function canDiscard() {
+  return !state.dirty ||
+    confirm("Отменить несохранённые изменения?");
+}
+
+function requireRoot() {
+  if (!state.root) {
+    throw new Error("Сначала откройте папку vtx_catalog.");
+  }
+}
+
+function validDirectory(name) {
+  return typeof name === "string" &&
+    name.length > 0 &&
+    name === name.trim() &&
+    name !== "." &&
+    name !== ".." &&
+    name !== "_editor_backups" &&
+    !/[<>:"/\\|?*\u0000-\u001f]/.test(name) &&
+    !/[. ]$/.test(name) &&
+    !/^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\.|$)/i.test(name);
+}
+
+function isObject(value) {
+  return value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value);
+}
+
+async function optionalFile(directory, name) {
+  try {
+    const handle = await directory.getFileHandle(name);
+    return await handle.getFile();
+  } catch (error) {
+    if (error.name === "NotFoundError") return null;
+    throw error;
+  }
+}
+
+async function readJSON(directory, name) {
+  const file = await optionalFile(directory, name);
+
+  if (!file) {
+    throw new Error(`Не найден файл: ${name}`);
+  }
+
+  try {
+    return JSON.parse(await file.text());
+  } catch (error) {
+    throw new Error(`Некорректный JSON в ${name}: ${error.message}`);
+  }
+}
+
+async function readIndex(directory = state.root) {
+  const result = await readJSON(directory, "index.json");
+
+  if (!Array.isArray(result) ||
+      result.some(name => !validDirectory(name))) {
+    throw new Error(
+      "index.json должен содержать массив допустимых имён папок."
+    );
+  }
+
+  if (new Set(result).size !== result.length) {
+    throw new Error("В index.json обнаружены повторяющиеся имена папок.");
+  }
+
+  return result;
+}
+
+async function writeFile(directory, name, content) {
+  const handle = await directory.getFileHandle(name, { create: true });
+  const stream = await handle.createWritable();
+
+  try {
+    await stream.write(content);
+    await stream.close();
+  } catch (error) {
+    try { await stream.abort(); } catch {}
+    throw error;
+  }
+}
+
+async function writeJSON(directory, name, value) {
+  await writeFile(
+    directory,
+    name,
+    JSON.stringify(value, null, 2) + "\n"
+  );
+}
+
+async function removeFile(directory, name) {
+  try {
+    await directory.removeEntry(name);
+  } catch (error) {
+    if (error.name !== "NotFoundError") throw error;
+  }
+}
+
+/*
+ * Резервная копия создаётся до изменения рабочих файлов.
+ * Каждая операция получает отдельную папку.
+ */
+async function backup(id, directory = null) {
+  const root = await state.root.getDirectoryHandle(
+    "_editor_backups",
+    { create: true }
+  );
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const name = `${stamp}_${crypto.randomUUID().slice(0, 8)}`;
+
+  const destination = await root.getDirectoryHandle(
+    name,
+    { create: true }
+  );
+
+  const indexFile = await optionalFile(state.root, "index.json");
+
+  if (indexFile) {
+    await writeFile(destination, "index.json", indexFile);
+  }
+
+  if (directory) {
+    const cardBackup = await destination.getDirectoryHandle(
+      id,
+      { create: true }
+    );
+
+    for (const filename of Object.values(FILES)) {
+      const file = await optionalFile(directory, filename);
+      if (file) await writeFile(cardBackup, filename, file);
+    }
+  }
+
+  await writeJSON(destination, "operation.json", {
+    card: id,
+    date: new Date().toISOString(),
+    existingCardFilesCopied: Boolean(directory)
+  });
+
+  return `_editor_backups/${name}`;
+}
+
+async function renderList() {
+  $("list").replaceChildren();
+
+  for (const id of state.ids) {
+    let name = id;
+
+    try {
+      const directory = await state.root.getDirectoryHandle(id);
+      const description = await readJSON(directory, FILES.description);
+
+      if (typeof description?.["Название"] === "string") {
+        name = description["Название"];
+      }
+    } catch {
+      // Ошибка конкретной карточки не мешает показать весь список.
+    }
+
+    const button = document.createElement("button");
+    button.className = "card";
+    button.classList.toggle("active", id === state.id);
+    button.dataset.id = id;
+    button.dataset.search = `${id} ${name}`.toLowerCase();
+
+    const title = document.createElement("strong");
+    title.textContent = name;
+
+    const subtitle = document.createElement("small");
+    subtitle.textContent = id;
+
+    button.append(title, subtitle);
+    button.onclick = () => run(() => openCard(id));
+
+    $("list").append(button);
+  }
+
+  filterList();
+}
+
+function filterList() {
+  const query = $("search").value.trim().toLowerCase();
+
+  for (const button of $("list").children) {
+    button.hidden = !button.dataset.search.includes(query);
+  }
+}
+
+function highlightCard() {
+  for (const button of $("list").children) {
+    button.classList.toggle(
+      "active",
+      button.dataset.id === state.id
+    );
+  }
+}
+
+function showPreview(kind, blob) {
+  const item = state.media[kind];
+
+  if (item.url) URL.revokeObjectURL(item.url);
+  item.url = null;
+
+  const container = $(kind + "Preview");
+  container.replaceChildren();
+
+  if (!blob) {
+    container.textContent = "Изображение отсутствует";
+    return;
+  }
+
+  item.url = URL.createObjectURL(blob);
+
+  const image = document.createElement("img");
+  image.src = item.url;
+  image.alt = kind === "photo" ? "Фото VTX" : "Распиновка VTX";
+
+  container.append(image);
+}
+
+function resetEditor() {
+  state.id = null;
+  state.config = null;
+  state.profile = null;
+  state.isNew = false;
+
+  for (const kind of ["photo", "pin"]) {
+    state.media[kind].pending = undefined;
+    $(kind + "File").value = "";
+    showPreview(kind, null);
+  }
+
+  markDirty(false);
+  $("editor").hidden = true;
+  $("empty").hidden = false;
+}
+
+function validateDescription(value) {
+  if (!isObject(value) ||
+      Object.values(value).some(item => typeof item !== "string")) {
+    throw new Error(
+      "Описание должно быть JSON-объектом со строковыми значениями."
+    );
+  }
+}
+
+function validateConfigShape(config) {
+  if (!isObject(config) ||
+      !Array.isArray(config.bands) ||
+      !isObject(config.profiles) ||
+      Object.keys(config.profiles).length === 0) {
+    throw new Error("Некорректная структура vtx конфиг.json.");
+  }
+
+  if (!Object.hasOwn(config.profiles, config.default_protocol)) {
+    throw new Error("default_protocol не найден в profiles.");
+  }
+
+  for (const band of config.bands) {
+    if (!isObject(band) || !Array.isArray(band.frequencies)) {
+      throw new Error("Некорректный диапазон в bands.");
+    }
+  }
+
+  for (const [name, profile] of Object.entries(config.profiles)) {
+    if (!isObject(profile) ||
+        !Array.isArray(profile.powers) ||
+        profile.powers.some(power => !isObject(power))) {
+      throw new Error(`Некорректные powers в профиле ${name}.`);
+    }
+  }
+}
+
+function fillProfiles() {
+  $("profile").replaceChildren();
+  $("defaultProtocol").replaceChildren();
+
+  for (const name of Object.keys(state.config.profiles)) {
+    $("profile").add(new Option(name, name));
+    $("defaultProtocol").add(new Option(name, name));
+  }
+
+  $("profile").value = state.profile;
+  $("defaultProtocol").value = state.config.default_protocol;
+}
+
+function makeCLI(config, profileName) {
+  const bands = config.bands;
+  const powers = config.profiles[profileName].powers;
+  const channels = bands[0]?.frequencies.length || 0;
+
+  return [
+    "# VTX table",
+    `vtxtable bands ${bands.length}`,
+    `vtxtable channels ${channels}`,
+    ...bands.map((band, index) =>
+      `vtxtable band ${index + 1} ${band.name} ${band.letter} CUSTOM ` +
+      band.frequencies.join(" ")
+    ),
+    `vtxtable powerlevels ${powers.length}`,
+    `vtxtable powervalues ${powers.map(p => p.value).join(" ")}`,
+    `vtxtable powerlabels ${powers.map(p => p.label).join(" ")}`
+  ].join("\n");
+}
+
+function fillCLI() {
+  $("cli").value = makeCLI(state.config, state.profile);
+
+  $("mw").value = state.config.profiles[state.profile].powers
+    .map(power => power.mw ?? "")
+    .join(", ");
+}
+
+function integer(text, name, min, max) {
+  if (!/^\d+$/.test(String(text))) {
+    throw new Error(`${name}: ожидается целое неотрицательное число.`);
+  }
+
+  const value = Number(text);
+
+  if (!Number.isSafeInteger(value) || value < min || value > max) {
+    throw new Error(`${name}: допустимо от ${min} до ${max}.`);
+  }
+
+  return value;
+}
+
+/*
+ * Поддерживаемый CLI:
+ * vtxtable bands
+ * vtxtable channels
+ * vtxtable band ... CUSTOM ...
+ * vtxtable powerlevels
+ * vtxtable powervalues
+ * vtxtable powerlabels
+ *
+ * Пустые строки, комментарии # и команда save допускаются.
+ * Остальные команды не игнорируются, а вызывают ошибку.
+ */
+function parseCLI(text, mwText, oldConfig, profileName) {
+  const single = new Map();
+  const bandRows = new Map();
+
+  const allowed = new Set([
+    "bands", "channels", "powerlevels", "powervalues", "powerlabels"
+  ]);
+
+  for (const [lineIndex, raw] of text.split(/\r?\n/).entries()) {
+    const line = raw.split("#")[0].trim();
+    if (!line || line === "save") continue;
+
+    const tokens = line.split(/\s+/);
+    const prefix = `Строка ${lineIndex + 1}`;
+
+    if (tokens[0] !== "vtxtable") {
+      throw new Error(`${prefix}: поддерживаются только команды vtxtable.`);
+    }
+
+    const command = tokens[1];
+    const args = tokens.slice(2);
+
+    if (command === "band") {
+      const number = integer(args[0], `${prefix}: номер диапазона`, 1, 8);
+
+      if (bandRows.has(number)) {
+        throw new Error(`${prefix}: диапазон ${number} указан повторно.`);
+      }
+
+      bandRows.set(number, args);
+    } else {
+      if (!allowed.has(command)) {
+        throw new Error(`${prefix}: неизвестная команда ${command}.`);
+      }
+
+      if (single.has(command)) {
+        throw new Error(`${prefix}: команда ${command} указана повторно.`);
+      }
+
+      single.set(command, args);
+    }
+  }
+
+  function scalar(name, min, max) {
+    const args = single.get(name);
+
+    if (!args || args.length !== 1) {
+      throw new Error(`Команда vtxtable ${name} требует одно значение.`);
+    }
+
+    return integer(args[0], name, min, max);
+  }
+
+  const bandCount = scalar("bands", 1, 8);
+  const channelCount = scalar("channels", 1, 8);
+  const powerCount = scalar("powerlevels", 1, 8);
+
+  if (bandRows.size !== bandCount) {
+    throw new Error("Количество строк band не соответствует bands.");
+  }
+
+  const bands = [];
+
+  for (let number = 1; number <= bandCount; number++) {
+    const args = bandRows.get(number);
+
+    if (!args || args.length !== 4 + channelCount) {
+      throw new Error(
+        `Диапазон ${number}: требуется ровно ${channelCount} частот.`
+      );
+    }
+
+    const [, name, letter, mode, ...frequencies] = args;
+
+    if (!/^[A-Za-z0-9_]{1,8}$/.test(name)) {
+      throw new Error(
+        `Диапазон ${number}: имя — 1–8 латинских букв, цифр или _.`
+      );
+    }
+
+    if (!/^[A-Z]$/.test(letter)) {
+      throw new Error(
+        `Диапазон ${number}: letter должен быть одной буквой A–Z.`
+      );
+    }
+
+    if (mode !== "CUSTOM") {
+      throw new Error(
+        `Диапазон ${number}: поддерживается CUSTOM. ` +
+        "Исходная JSON-схема не содержит признака FACTORY."
+      );
+    }
+
+    bands.push({
+      ...(oldConfig.bands[number - 1] || {}),
+      name,
+      letter,
+      frequencies: frequencies.map(value =>
+        integer(value, `Частота диапазона ${number}`, 0, 65535)
+      )
+    });
+  }
+
+  const values = single.get("powervalues");
+  const labels = single.get("powerlabels");
+
+  if (!values || values.length !== powerCount ||
+      !labels || labels.length !== powerCount) {
+    throw new Error(
+      "Количество powervalues и powerlabels должно совпадать с powerlevels."
+    );
+  }
+
+  for (const label of labels) {
+    if (!/^[A-Za-z0-9_.-]{1,3}$/.test(label)) {
+      throw new Error(
+        `Метка мощности "${label}": допустимо 1–3 символа без пробелов.`
+      );
+    }
+  }
+
+  const trimmedMW = mwText.trim();
+
+  const mwTokens = trimmedMW
+    ? (/[;,]/.test(trimmedMW)
+        ? trimmedMW.split(/[;,]/).map(value => value.trim())
+        : trimmedMW.split(/\s+/))
+    : [];
+
+  if (mwTokens.length !== powerCount || mwTokens.some(value => !value)) {
+    throw new Error(
+      `В поле реальной мощности mw требуется ${powerCount} значений.`
+    );
+  }
+
+  const previousPowers = oldConfig.profiles[profileName].powers;
+
+  const powers = values.map((value, index) => ({
+    ...(previousPowers[index] || {}),
+    label: labels[index],
+    value: integer(value, "powervalue", 0, 65535),
+    mw: integer(mwTokens[index], "Мощность mw", 0, 1000000)
+  }));
+
+  const result = structuredClone(oldConfig);
+  result.bands = bands;
+  result.profiles[profileName].powers = powers;
+
+  return result;
+}
+
+function commitCLI() {
+  state.config = parseCLI(
+    $("cli").value,
+    $("mw").value,
+    state.config,
+    state.profile
+  );
+}
+
+function showEditor() {
+  $("editor").hidden = false;
+  $("empty").hidden = true;
+  $("directory").value = state.id;
+  $("directory").disabled = !state.isNew;
+  $("delete").hidden = state.isNew;
+
+  fillProfiles();
+  fillCLI();
+  highlightCard();
+}
+
+// Отсутствующий файл — допустим.
+// Существующий файл с ошибкой JSON — ошибка, чтобы не затереть его шаблоном.
+async function readOptionalJSON(directory, filename) {
+  const file = await optionalFile(directory, filename);
+
+  if (!file) {
+    return { exists: false, value: null };
+  }
+
+  try {
+    return {
+      exists: true,
+      value: JSON.parse(await file.text())
+    };
+  } catch (error) {
+    throw new Error(
+      `Некорректный JSON в ${filename}: ${error.message}`
+    );
+  }
+}
+
+// Это только пример для заполнения, а не определённые параметры устройства.
+function createConfigTemplate() {
+  return {
+    default_protocol: "IRC Tramp",
+    bands: [
+      {
+        name: "BAND_A",
+        letter: "A",
+        frequencies: [
+          5865, 5845, 5825, 5805,
+          5785, 5765, 5745, 5725
+        ]
+      }
+    ],
+    profiles: {
+      "IRC Tramp": {
+        powers: [
+          {
+            label: "25",
+            value: 25,
+            mw: 25
+          }
+        ]
+      }
+    }
+  };
+}
+
+async function openCard(id) {
+  if (!canDiscard()) return;
+
+  requireRoot();
+
+  // Единственное обязательное условие — наличие папки карточки.
+  let directory;
+
+  try {
+    directory = await state.root.getDirectoryHandle(id);
+  } catch (error) {
+    if (error.name === "NotFoundError") {
+      throw new Error(`Не найдена папка карточки: ${id}`);
+    }
+
+    throw error;
+  }
+
+  const configFile = await readOptionalJSON(
+    directory,
+    FILES.config
+  );
+
+  const descriptionFile = await readOptionalJSON(
+    directory,
+    FILES.description
+  );
+
+  const config = configFile.exists
+    ? configFile.value
+    : createConfigTemplate();
+
+  const description = descriptionFile.exists
+    ? descriptionFile.value
+    : {
+        "Название": id,
+        "Диапазон": "",
+        "Каналы": "",
+        "Протокол": "",
+        "Мощность": "",
+        "Кулер": "",
+        "Крепление": "",
+        "Коннектор": "",
+        "Основной цвет": "",
+        "Дополнительный цвет": "",
+        "Индикация": ""
+      };
+
+  validateConfigShape(config);
+  validateDescription(description);
+
+  // Отсутствующие изображения уже поддерживаются optionalFile().
+  const photo = await optionalFile(directory, FILES.photo);
+  const pin = await optionalFile(directory, FILES.pin);
+
+  // Состояние меняем только после успешного чтения данных.
+  state.id = id;
+  state.isNew = false;
+  state.config = config;
+  state.profile = config.default_protocol;
+
+  $("description").value = JSON.stringify(description, null, 2);
+
+  for (const kind of ["photo", "pin"]) {
+    state.media[kind].pending = undefined;
+    $(kind + "File").value = "";
+  }
+
+  showPreview("photo", photo);
+  showPreview("pin", pin);
+  showEditor();
+
+  const missingFiles = [];
+
+  if (!configFile.exists) {
+    missingFiles.push(FILES.config);
+  }
+
+  if (!descriptionFile.exists) {
+    missingFiles.push(FILES.description);
+  }
+
+  // Шаблоны ещё не записаны на диск.
+  markDirty(missingFiles.length > 0);
+
+  const messages = [`Открыта карточка: ${id}`];
+
+  if (missingFiles.length) {
+    messages.push(
+      `Отсутствуют файлы: ${missingFiles.join(", ")}.`,
+      "Показаны шаблоны. Заполните их и нажмите «Сохранить»."
+    );
+  }
+
+  if (!configFile.exists) {
+    messages.push(
+      "ВНИМАНИЕ: частоты, протокол и мощности в CLI — пример, " +
+      "замените их параметрами вашего VTX."
+    );
+  }
+
+  status(messages.join("\n"));
+}
+
+
+function createCard() {
+  requireRoot();
+  if (!canDiscard()) return;
+
+  const maxNumber = state.ids.reduce((max, id) => {
+    const match = /^(\d+)_/.exec(id);
+    return Math.max(max, match ? Number(match[1]) : 0);
+  }, 0);
+
+  state.id = `${String(maxNumber + 1).padStart(3, "0")}_New_VTX`;
+  state.isNew = true;
+  state.profile = "IRC Tramp";
+
+  state.config = {
+    default_protocol: "IRC Tramp",
+    bands: [{
+      name: "BAND_A",
+      letter: "A",
+      frequencies: [5865, 5845, 5825, 5805, 5785, 5765, 5745, 5725]
+    }],
+    profiles: {
+      "IRC Tramp": {
+        powers: [
+          { label: "25", value: 25, mw: 25 },
+          { label: "400", value: 400, mw: 400 }
+        ]
+      }
+    }
+  };
+
+  $("description").value = JSON.stringify({
+    "Название": "Новый VTX",
+    "Диапазон": "5.8G",
+    "Каналы": "8Ch",
+    "Протокол": "IRC Tramp",
+    "Мощность": "400mW",
+    "Кулер": "-",
+    "Крепление": "",
+    "Коннектор": "",
+    "Основной цвет": "",
+    "Дополнительный цвет": "",
+    "Индикация": ""
+  }, null, 2);
+
+  for (const kind of ["photo", "pin"]) {
+    state.media[kind].pending = undefined;
+    $(kind + "File").value = "";
+    showPreview(kind, null);
+  }
+
+  showEditor();
+  markDirty();
+  status("Новая карточка. Проверьте шаблон перед сохранением.");
+}
+
+async function convertToWebP(file) {
+  const bitmap = await createImageBitmap(file);
+
+  try {
+    // Ограничение защищает от случайной загрузки чрезмерно больших файлов.
+    if (bitmap.width * bitmap.height > 40000000) {
+      throw new Error("Изображение слишком большое: максимум 40 мегапикселей.");
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+
+    const context = canvas.getContext("2d");
+
+    if (!context) {
+      throw new Error("Не удалось создать canvas для изображения.");
+    }
+
+    context.drawImage(bitmap, 0, 0);
+
+    const blob = await new Promise(resolve =>
+      canvas.toBlob(resolve, "image/webp", 0.95)
+    );
+
+    if (!blob || blob.type !== "image/webp") {
+      throw new Error("Браузер не смог преобразовать изображение в WebP.");
+    }
+
+    return blob;
+  } finally {
+    bitmap.close();
+  }
+}
+
+async function saveCard() {
+  requireRoot();
+  if (!state.config) return;
+
+  commitCLI();
+
+  let description;
+
+  try {
+    description = JSON.parse($("description").value);
+  } catch (error) {
+    throw new Error(`Ошибка JSON описания: ${error.message}`);
+  }
+
+  validateDescription(description);
+
+  const id = $("directory").value;
+
+  if (!validDirectory(id)) {
+    throw new Error("Недопустимое имя папки.");
+  }
+
+  // Читаем актуальный индекс непосредственно перед записью.
+  const ids = await readIndex();
+  let directory = null;
+
+  if (state.isNew) {
+    if (ids.includes(id)) {
+      throw new Error("Карточка с таким именем уже есть в index.json.");
+    }
+
+    try {
+      await state.root.getDirectoryHandle(id);
+      throw new Error(
+        "Папка с таким именем уже существует. Выберите другое имя."
+      );
+    } catch (error) {
+      if (error.name !== "NotFoundError") throw error;
+    }
+  } else {
+    if (id !== state.id || !ids.includes(id)) {
+      throw new Error(
+        "Карточка отсутствует в актуальном индексе. Обновите каталог."
+      );
+    }
+
+    directory = await state.root.getDirectoryHandle(id);
+  }
+
+  const backupPath = await backup(id, directory);
+
+  try {
+    if (!directory) {
+      directory = await state.root.getDirectoryHandle(id, { create: true });
+    }
+
+    await writeJSON(directory, FILES.config, state.config);
+    await writeJSON(directory, FILES.description, description);
+
+    for (const kind of ["photo", "pin"]) {
+      const pending = state.media[kind].pending;
+
+      if (pending === null) {
+        await removeFile(directory, FILES[kind]);
+      } else if (pending !== undefined) {
+        await writeFile(directory, FILES[kind], pending);
+      }
+    }
+
+    if (state.isNew) ids.push(id);
+
+    // Индекс обновляется последним.
+    await writeJSON(state.root, "index.json", ids);
+  } catch (error) {
+    throw new Error(
+      `Ошибка записи: ${error.message}\n` +
+      `Резервная копия: ${backupPath}\n` +
+      "Часть файлов могла быть записана. Проверьте каталог перед повтором."
+    );
+  }
+
+  state.id = id;
+  state.ids = ids;
+  state.isNew = false;
+
+  for (const kind of ["photo", "pin"]) {
+    state.media[kind].pending = undefined;
+  }
+
+  $("directory").disabled = true;
+  $("delete").hidden = false;
+
+  markDirty(false);
+  await renderList();
+
+  status(`Сохранено: ${id}\nРезервная копия: ${backupPath}`);
+}
+
+async function deleteCard() {
+  if (!state.id || state.isNew) return;
+
+  const id = state.id;
+
+  if (!confirm(
+    `Удалить "${id}" из index.json?\n\n` +
+    "Папка и её файлы останутся на диске.\n" +
+    "Несохранённые изменения будут отменены."
+  )) return;
+
+  const ids = await readIndex();
+  const backupPath = await backup(id);
+
+  await writeJSON(
+    state.root,
+    "index.json",
+    ids.filter(item => item !== id)
+  );
+
+  state.ids = ids.filter(item => item !== id);
+  resetEditor();
+  await renderList();
+
+  status(
+    `Карточка удалена из index.json. Папка сохранена.\n` +
+    `Резервная копия индекса: ${backupPath}`
+  );
+}
+
+$("openFolder").onclick = () => run(async () => {
+  if (!canDiscard()) return;
+
+  if (!window.showDirectoryPicker) {
+    throw new Error(
+      "Нужен Chrome или Edge. Если файл открыт напрямую и API недоступен, " +
+      "запустите страницу через start.cmd."
+    );
+  }
+
+  const root = await window.showDirectoryPicker({ mode: "readwrite" });
+  const indexFile = await optionalFile(root, "index.json");
+
+  if (!indexFile) {
+    if (!confirm(
+      "В выбранной папке нет index.json.\nСоздать пустой каталог?"
+    )) return;
+
+    await writeJSON(root, "index.json", []);
+  }
+
+  const ids = await readIndex(root);
+
+  state.root = root;
+  state.ids = ids;
+
+  resetEditor();
+  $("folderLabel").textContent = root.name;
+  await renderList();
+
+  status(`Открыта папка ${root.name}. Карточек: ${ids.length}`);
+});
+
+$("newCard").onclick = () => run(createCard);
+
+$("refresh").onclick = () => run(async () => {
+  requireRoot();
+  if (!canDiscard()) return;
+
+  const ids = await readIndex();
+  state.ids = ids;
+
+  resetEditor();
+  await renderList();
+  status("Список обновлён.");
+});
+
+$("search").oninput = filterList;
+$("save").onclick = () => run(saveCard);
+$("delete").onclick = () => run(deleteCard);
+
+$("profile").onchange = () => run(async () => {
+  const nextProfile = $("profile").value;
+
+  try {
+    commitCLI();
+  } catch (error) {
+    $("profile").value = state.profile;
+    throw error;
+  }
+
+  state.profile = nextProfile;
+  fillCLI();
+});
+
+$("defaultProtocol").onchange = () => {
+  if (!state.config) return;
+  state.config.default_protocol = $("defaultProtocol").value;
+  markDirty();
+};
+
+$("addProfile").onclick = () => run(async () => {
+  if (!state.config) return;
+
+  const answer = prompt(
+    "Название нового протокола:",
+    "SmartAudio"
+  );
+
+  if (answer === null) return;
+  const name = answer.trim();
+
+  if (!name || name.length > 80 ||
+      ["__proto__", "constructor", "prototype"].includes(name)) {
+    throw new Error("Недопустимое имя протокола.");
+  }
+
+  if (Object.hasOwn(state.config.profiles, name)) {
+    throw new Error("Такой профиль уже существует.");
+  }
+
+  commitCLI();
+
+  // Копируются мощности текущего профиля.
+  // Для нового протокола их необходимо проверить вручную.
+  state.config.profiles[name] =
+    structuredClone(state.config.profiles[state.profile]);
+
+  state.profile = name;
+
+  fillProfiles();
+  fillCLI();
+  markDirty();
+
+  status(
+    "Профиль добавлен. Проверьте powervalues: " +
+    "их смысл зависит от протокола и устройства."
+  );
+});
+
+$("downloadCli").onclick = () => run(async () => {
+  if (!state.config) return;
+
+  commitCLI();
+
+  const text = makeCLI(state.config, state.profile) + "\n\nsave\n";
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${$("directory").value || "vtx"}_CLI.txt`;
+
+  document.body.append(link);
+  link.click();
+  link.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+
+  status("CLI скачан. Файлы каталога при этом не изменялись.");
+});
+
+for (const kind of ["photo", "pin"]) {
+  $(kind + "File").onchange = () => run(async () => {
+    const file = $(kind + "File").files[0];
+    if (!file) return;
+
+    const blob = await convertToWebP(file);
+
+    state.media[kind].pending = blob;
+    showPreview(kind, blob);
+    markDirty();
+  });
+
+  $(kind === "photo" ? "removePhoto" : "removePin").onclick = () => {
+    state.media[kind].pending = null;
+    $(kind + "File").value = "";
+    showPreview(kind, null);
+    markDirty();
+  };
+}
+
+for (const id of ["directory", "cli", "mw", "description"]) {
+  $(id).addEventListener("input", () => markDirty());
+}
+window.addEventListener("beforeunload", event => {
+  if (state.dirty || state.busy) {
+    event.preventDefault();
+    event.returnValue = "";
+  }
+});
+
+resetEditor();
+</script>
+</body>
+</html>
