@@ -3,7 +3,7 @@
 
   const TEMPLATE_FILE = "MPX template.lua";
 
-  const $ = selector => document.querySelector(selector);
+  const $ = (selector) => document.querySelector(selector);
 
   const ui = {
     open: $("#lua-button"),
@@ -40,7 +40,7 @@
 
     powerCount: $("#power-rule-count"),
     channelCount: $("#channel-rule-count"),
-    countHint: $("#count-hint")
+    countHint: $("#count-hint"),
   };
 
   const bridge = window.vtxBridge;
@@ -56,9 +56,7 @@
   let templateError = "";
   let copyTimer;
 
-  const switchNames = [
-    "sa", "sb", "sc", "sd", "se", "sf", "sg", "sh"
-  ];
+  const switchNames = ["sa", "sb", "sc", "sd", "se", "sf", "sg", "sh"];
 
   for (const select of [ui.incSwitch, ui.decSwitch]) {
     for (const name of switchNames) {
@@ -109,11 +107,11 @@
     ui.powerCount.disabled = !split;
     ui.channelCount.disabled = !split;
 
-    ui.powerCount.value = snapshot.rules.filter(rule => {
+    ui.powerCount.value = snapshot.rules.filter((rule) => {
       return rule.group === "power";
     }).length;
 
-    ui.channelCount.value = snapshot.rules.filter(rule => {
+    ui.channelCount.value = snapshot.rules.filter((rule) => {
       return rule.group === "channel";
     }).length;
 
@@ -166,21 +164,15 @@
    * крайние -100 / 100 не используем.
    */
   function mixerValue(rule, position) {
-    const lowest = Math.max(
-      -100,
-      Math.ceil((rule.min - 1500) / 5)
-    );
+    const lowest = Math.max(-100, Math.ceil((rule.min - 1500) / 5));
 
-    const highest = Math.min(
-      100,
-      Math.ceil((rule.max - 1500) / 5) - 1
-    );
+    const highest = Math.min(100, Math.ceil((rule.max - 1500) / 5) - 1);
 
     if (lowest > highest) {
       throw new Error(
         `Позиция ${position}: диапазон ${rule.min}–${rule.max} ` +
-        "невозможно активировать значением микшера от −100 до 100. " +
-        "Измените ШИМ или включите Авто ШИМ."
+          "невозможно активировать значением микшера от −100 до 100. " +
+          "Измените ШИМ или включите Авто ШИМ.",
       );
     }
 
@@ -197,10 +189,7 @@
     const center = (rule.min + rule.max) / 2;
     const preferred = Math.round((center - 1500) / 5);
 
-    return Math.max(
-      safeLowest,
-      Math.min(safeHighest, preferred)
-    );
+    return Math.max(safeLowest, Math.min(safeHighest, preferred));
   }
 
   function luaArray(values) {
@@ -220,7 +209,7 @@
       return snapshot.rules;
     }
 
-    return snapshot.rules.filter(rule => {
+    return snapshot.rules.filter((rule) => {
       return rule.group === ui.source.value;
     });
   }
@@ -228,8 +217,7 @@
   function buildParameters(snapshot) {
     if (snapshot.errors.length) {
       throw new Error(
-        "Исправьте ошибки VTX-правил:\n" +
-        snapshot.errors.join("\n")
+        "Исправьте ошибки VTX-правил:\n" + snapshot.errors.join("\n"),
       );
     }
 
@@ -238,7 +226,7 @@
     if (!rules.length) {
       throw new Error(
         "Нет правил для генерации. Добавьте правила " +
-        "или измените выбранную колонку."
+          "или измените выбранную колонку.",
       );
     }
 
@@ -251,7 +239,7 @@
     ) {
       throw new Error(
         "Для шагов +1 и −1 нельзя выбрать одно и то же " +
-        "положение одного переключателя."
+          "положение одного переключателя.",
       );
     }
 
@@ -264,14 +252,14 @@
       Math.abs(delay * 10 - Math.round(delay * 10)) > 0.000001
     ) {
       throw new Error(
-        "Задержка должна быть от 0.1 до 3600 секунд с шагом 0.1."
+        "Задержка должна быть от 0.1 до 3600 секунд с шагом 0.1.",
       );
     }
 
     const positions = rules.map((rule, index) => ({
       rule,
       channel: rule.aux + 4,
-      value: mixerValue(rule, index + 1)
+      value: mixerValue(rule, index + 1),
     }));
 
     return {
@@ -280,26 +268,15 @@
       replacements: {
         POSITIONS: String(rules.length),
 
-        CHANNELS: luaArray(
-          positions.map(item => item.channel)
-        ),
+        CHANNELS: luaArray(positions.map((item) => item.channel)),
 
-        VALUES: luaArray(
-          positions.map(item => item.value)
-        ),
+        VALUES: luaArray(positions.map((item) => item.value)),
 
-        FREQUENCIES: luaArray(
-          rules.map(() => 0)
-        ),
+        FREQUENCIES: luaArray(rules.map(() => 0)),
 
-        POWERS: luaArray(
-          rules.map(rule => rule.power)
-        ),
+        POWERS: luaArray(rules.map((rule) => rule.power)),
 
-        INC_SWITCH: luaSwitch(
-          ui.incSwitch.value,
-          ui.incState.value
-        ),
+        INC_SWITCH: luaSwitch(ui.incSwitch.value, ui.incState.value),
 
         DEC_SWITCH: useDec
           ? luaSwitch(ui.decSwitch.value, ui.decState.value)
@@ -308,8 +285,8 @@
         CYCLIC: luaBoolean(ui.cyclic.checked),
         VOICE: luaBoolean(ui.voice.checked),
         HOLD: luaBoolean(ui.hold.checked),
-        DELAY: String(delay)
-      }
+        DELAY: String(delay),
+      },
     };
   }
 
@@ -330,7 +307,7 @@
     for (const [key, value] of Object.entries(replacements)) {
       const pattern = new RegExp(
         `^([\\t ]*)${key}[\\t ]*=[\\t ]*([^\\r\\n]*)`,
-        "gm"
+        "gm",
       );
 
       let matches = 0;
@@ -340,13 +317,11 @@
 
         const commentIndex = rightSide.indexOf("--");
 
-        const expression = commentIndex >= 0
-          ? rightSide.slice(0, commentIndex)
-          : rightSide;
+        const expression =
+          commentIndex >= 0 ? rightSide.slice(0, commentIndex) : rightSide;
 
-        const comment = commentIndex >= 0
-          ? ` ${rightSide.slice(commentIndex)}`
-          : "";
+        const comment =
+          commentIndex >= 0 ? ` ${rightSide.slice(commentIndex)}` : "";
 
         const comma = expression.trimEnd().endsWith(",") ? "," : "";
 
@@ -356,8 +331,8 @@
       if (matches !== 1) {
         throw new Error(
           `В шаблоне поле ${key} найдено ${matches} раз. ` +
-          "Нужна ровно одна строка вида: " +
-          `${key} = значение`
+            "Нужна ровно одна строка вида: " +
+            `${key} = значение`,
         );
       }
     }
@@ -376,7 +351,7 @@
         `AUX${item.rule.aux} / CH${item.channel}`,
         `${item.rule.min}–${item.rule.max}`,
         item.value,
-        item.rule.power
+        item.rule.power,
       ];
 
       for (const value of values) {
@@ -422,16 +397,12 @@
         return;
       }
 
-      generatedScript = patchTemplate(
-        template,
-        data.replacements
-      );
+      generatedScript = patchTemplate(template, data.replacements);
 
       ui.output.value = generatedScript;
       ui.copy.disabled = false;
 
-      ui.status.textContent =
-        `Позиций: ${data.positions.length}. Скрипт обновлён.`;
+      ui.status.textContent = `Позиций: ${data.positions.length}. Скрипт обновлён.`;
     } catch (error) {
       setError(error.message);
     }
@@ -451,7 +422,7 @@
       const url = new URL(TEMPLATE_FILE, document.baseURI);
 
       const response = await fetch(url, {
-        cache: "no-store"
+        cache: "no-store",
       });
 
       if (!response.ok) {
@@ -536,8 +507,8 @@
   });
 
   // Клавиатурное переключение вкладок.
-  [ui.settingsTab, ui.codeTab].forEach(tab => {
-    tab.addEventListener("keydown", event => {
+  [ui.settingsTab, ui.codeTab].forEach((tab) => {
+    tab.addEventListener("keydown", (event) => {
       if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) {
         return;
       }
@@ -549,15 +520,12 @@
       } else if (event.key === "End") {
         showTab("code", true);
       } else {
-        showTab(
-          tab === ui.settingsTab ? "code" : "settings",
-          true
-        );
+        showTab(tab === ui.settingsTab ? "code" : "settings", true);
       }
     });
   });
 
-  ui.settingsPane.addEventListener("input", event => {
+  ui.settingsPane.addEventListener("input", (event) => {
     if (event.target.matches("input, select")) {
       regenerate();
     }
@@ -594,6 +562,46 @@
 
       ui.status.textContent =
         "Автокопирование недоступно. Скрипт выделен — нажмите Ctrl+C.";
+    }
+  });
+
+  // Кнопка скачивания скрипта в виде MPX.lua.
+  const downloadButton = ui.dialog.querySelector("#download-script");
+
+  downloadButton.addEventListener("click", () => {
+    if (!generatedScript) {
+      ui.status.textContent = "Сначала дождитесь генерации скрипта.";
+      return;
+    }
+
+    const blob = new Blob([generatedScript], {
+      type: "text/plain;charset=utf-8",
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "MPX.lua";
+    link.hidden = true;
+
+    // Добавляем внутрь dialog, так как он открыт через showModal().
+    ui.dialog.append(link);
+
+    try {
+      link.click();
+
+      resetCopyStatus();
+      ui.status.textContent = "Скачивание MPX.lua запущено.";
+
+      copyTimer = setTimeout(() => {
+        ui.status.textContent = "Скрипт готов.";
+      }, 3000);
+    } finally {
+      link.remove();
+
+      // Освобождаем URL с задержкой, чтобы браузер успел начать скачивание.
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
     }
   });
 

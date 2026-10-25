@@ -158,6 +158,16 @@ h3 {
   font-size: 12px;
 }
 
+.luab {
+  min-height: 31px;
+  background-color: #09d9ba;
+  color: #fff;
+  border: 1px solid #00abe9;
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
 .settings {
   border-bottom: 1px solid var(--border);
 }
