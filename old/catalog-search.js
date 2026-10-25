@@ -241,7 +241,7 @@
 
       scheduleCatalogUpdate();
     });
-
+    
     // Изменение любого фильтра.
     document.addEventListener("change", (event) => {
       if (!(event.target instanceof Element)) return;

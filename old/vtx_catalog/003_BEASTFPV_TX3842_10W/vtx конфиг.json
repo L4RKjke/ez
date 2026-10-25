@@ -1,0 +1,9 @@
+{
+  "default_protocol": "IRC Tramp",
+  "bands": [],
+  "profiles": {
+    "IRC Tramp": {
+      "powers": []
+    }
+  }
+}

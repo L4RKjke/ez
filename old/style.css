@@ -1046,6 +1046,125 @@ html[data-theme="dark"] .vtx-card {
   color: #64748b;
 }
 
+/* Конфигурация */
+.vtx-selection {
+  --vtx-background: #151c28;
+  --vtx-input: #0e1520;
+  --vtx-border: #2b374a;
+  --vtx-text: #edf2fa;
+  --vtx-muted: #94a3b8;
+  --vtx-accent: #8bb5ff;
+
+  margin-top: 24px;
+  padding: 22px;
+  border: 1px solid var(--vtx-border);
+  border-radius: 14px;
+  background: var(--vtx-background);
+  color: var(--vtx-text);
+}
+
+.vtx-selection,
+.vtx-selection * {
+  box-sizing: border-box;
+}
+
+.vtx-selection__heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.vtx-selection__number {
+  display: grid;
+  place-items: center;
+  flex: 0 0 30px;
+  height: 30px;
+  border: 1px solid var(--vtx-border);
+  border-radius: 8px;
+  background: var(--vtx-input);
+  color: var(--vtx-accent);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.vtx-selection__heading h2 {
+  margin: 0;
+  color: var(--vtx-text);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.vtx-selection__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 580px;
+}
+
+.vtx-selection__field label {
+  color: var(--vtx-muted);
+  font-size: 13px;
+}
+
+.vtx-selection__field select {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--vtx-border);
+  border-radius: 8px;
+  background: var(--vtx-input);
+  color: var(--vtx-text);
+  color-scheme: dark;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.vtx-selection__field select:hover:not(:disabled) {
+  border-color: #536986;
+}
+
+.vtx-selection__field select:focus-visible {
+  border-color: var(--vtx-accent);
+  outline: 2px solid var(--vtx-accent);
+  outline-offset: 3px;
+}
+
+.vtx-selection__field select:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.vtx-selection__hint {
+  margin: 0;
+  color: var(--vtx-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.vtx-selection__hint--error {
+  color: #ffacac;
+}
+
+@media (max-width: 600px) {
+  .vtx-selection {
+    padding: 16px;
+  }
+
+  .vtx-selection__heading {
+    margin-bottom: 16px;
+  }
+
+  .vtx-selection__field {
+    max-width: none;
+  }
+}
+
 /* Поддержка вашего переключателя темы */
 html[data-theme="dark"] .catalog-search label {
   color: #e2e8f0;
