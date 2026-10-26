@@ -668,6 +668,99 @@ select:disabled {
   font-size: 12px;
 }
 
+#lua-button {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  padding: 8px 16px;
+  border: 1px solid #4ade80;
+  border-radius: 8px;
+
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+
+  background: linear-gradient(
+    120deg,
+    #14532d,
+    #15803d,
+    #047857,
+    #166534,
+    #14532d
+  );
+  background-size: 300% 300%;
+  box-shadow: 0 0 12px rgb(34 197 94 / 30%);
+
+  animation: lua-gradient 5s ease infinite;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+/* Переливающийся блик */
+#lua-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgb(255 255 255 / 30%) 50%,
+    transparent 70%
+  );
+
+  transform: translateX(-150%);
+  animation: lua-shine 3.5s ease-in-out infinite;
+}
+
+#lua-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 20px rgb(34 197 94 / 55%);
+}
+
+#lua-button:active {
+  transform: translateY(0);
+}
+
+#lua-button:focus-visible {
+  outline: 2px solid #86efac;
+  outline-offset: 3px;
+}
+
+@keyframes lua-gradient {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes lua-shine {
+  0%, 25% {
+    transform: translateX(-150%);
+  }
+  75%, 100% {
+    transform: translateX(150%);
+  }
+}
+
+/* Отключаем движение, если пользователь предпочитает меньше анимации */
+@media (prefers-reduced-motion: reduce) {
+  #lua-button {
+    animation: none;
+    transition: none;
+  }
+
+  #lua-button::before {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+
 @media (max-width: 560px) {
   .lua-form-grid,
   .lua-switch-grid {
