@@ -19,7 +19,6 @@
         </div>
         <span class="badge">Betaflight</span>
       </header>
-
       <div class="workspace">
         <!-- Блок 1 -->
         <section class="panel editor" aria-labelledby="editor-title">
@@ -192,6 +191,18 @@
           >
             Полный Lua-скрипт
           </button>
+          <button
+            id="lua-instruction-tab"
+            type="button"
+            class="button small"
+            role="tab"
+            aria-selected="false"
+            aria-controls="lua-instruction-pane"
+            tabindex="-1"
+            data-lua-tab="instruction"
+          >
+            Инструкция
+          </button>
         </div>
 
         <section
@@ -330,6 +341,98 @@
             aria-label="Полный Lua-скрипт"
           ></textarea>
         </section>
+        <section
+          id="lua-instruction-pane"
+          role="tabpanel"
+          aria-labelledby="lua-instruction-tab"
+          tabindex="0"
+          hidden
+        >
+          <h2>Инструкция</h2>
+
+          <h3>Что настраивается</h3>
+          <ul>
+            <li>
+              <strong>Позиции</strong> — формируются автоматически из финальной
+              сетки 975–2025 µs. При добавлении или удалении VTX-команд соседние
+              25‑µs слоты объединяются так, чтобы при 40 командах получался
+              исходный финальный вариант.
+            </li>
+            <li>
+              <strong>Каналы</strong> — берутся из выбранных AUX (пересчёт в RC:
+              CH = AUX + 4).
+            </li>
+            <li>
+              <strong>INC/DEC</strong> — тумблеры и их положения для шага
+              вперёд/назад.
+            </li>
+            <li>
+              <strong>Случайный шаг</strong> — опциональная кнопка, проходящая
+              по всем позициям без повторов.
+            </li>
+            <li>
+              <strong>Автонастройки</strong> — «Циклично», «Озвучка», «Автошаг»
+              и задержка между шагами.
+            </li>
+          </ul>
+
+          <h3>Порядок настройки (с нуля до файла)</h3>
+          <ol>
+            <li>
+              <strong>Загрузка VTX-таблицы (если есть).</strong>
+              В разделе «Загрузка VTX таблицы» выберите подходящий пресет (или
+              свой файл от производителя) и примените его. Если таблицы нет —
+              пропустите этот шаг, можно работать и без неё.
+            </li>
+            <li>
+              <strong>Правила переключения.</strong>
+              Перейдите в раздел «Настройки переключения VTX». Нажимайте
+              «Добавить команду VTX» для нужных Band/Channel/Power. Интервалы
+              Range создаются автоматически.
+            </li>
+            <li>
+              <strong>Открыть настройки Lua.</strong>
+              В этом же разделе нажмите кнопку «Lua-скрипт» — откроется окно
+              настроек скрипта.
+            </li>
+            <li>
+              <strong>Выбор кнопок.</strong>
+              На вкладке «Параметры» задайте тумблеры «Шаг −1» и «Шаг +1». При
+              желании включите «Случайный шаг», «Автошаг» (с задержкой),
+              «Циклично» и «Озвучка».
+            </li>
+            <li>
+              <strong>Скачать файл.</strong>
+              Откройте вкладку «Экспорт» и скачайте <code>mpx.lua</code>.
+            </li>
+          </ol>
+
+          <h3>Включение скрипта на передатчике</h3>
+          <ol>
+            <li>
+              Скопируйте файл <code>mpx.lua</code> в папку
+              <code>/SCRIPTS/FUNCTIONS/</code> на передатчике.
+            </li>
+            <li>
+              Откройте меню модели → <strong>Спец. функции</strong>
+              (Special Functions).
+            </li>
+            <li>
+              Создайте новую функцию: в колонке
+              <strong>Источник</strong> выберите <strong>ON</strong> (чтобы
+              скрипт работал постоянно).
+            </li>
+            <li>
+              В колонке <strong>Действие</strong> выберите
+              <strong>Lua Script</strong> и укажите файл <code>mpx.lua</code>.
+            </li>
+            <li>
+              Поставьте галочку <strong>Вкл.</strong> (Enabled). В некоторых
+              версиях прошивки/интерфейса этого флажка нет — это нормально,
+              просто продолжайте.
+            </li>
+          </ol>
+        </section>
 
         <div id="lua-error" class="message error" role="alert" hidden></div>
 
@@ -344,7 +447,7 @@
             <button id="lua-copy" type="button" class="button primary" disabled>
               Скопировать скрипт
             </button>
-            <button id="download-script" type="button"  class="luab">
+            <button id="download-script" type="button" class="luab">
               Скачать MPX.lua
             </button>
           </div>

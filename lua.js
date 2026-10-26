@@ -605,6 +605,75 @@
     }
   });
 
+  // Инструкциия
+  function initLuaTabs() {
+    const tabs = Array.from(
+      document.querySelectorAll('[role="tab"][data-lua-tab]'),
+    );
+
+    if (!tabs.length) return;
+
+    function activateTab(selectedTab) {
+      tabs.forEach((tab) => {
+        const isActive = tab === selectedTab;
+        const panel = document.getElementById(
+          tab.getAttribute("aria-controls"),
+        );
+
+        tab.classList.toggle("active", isActive);
+        tab.setAttribute("aria-selected", String(isActive));
+        tab.tabIndex = isActive ? 0 : -1;
+
+        if (panel) {
+          panel.hidden = !isActive;
+        }
+      });
+    }
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => {
+        activateTab(tab);
+      });
+
+      tab.addEventListener("keydown", (event) => {
+        let nextIndex;
+
+        switch (event.key) {
+          case "ArrowRight":
+            nextIndex = (index + 1) % tabs.length;
+            break;
+          case "ArrowLeft":
+            nextIndex = (index - 1 + tabs.length) % tabs.length;
+            break;
+          case "Home":
+            nextIndex = 0;
+            break;
+          case "End":
+            nextIndex = tabs.length - 1;
+            break;
+          default:
+            return;
+        }
+
+        event.preventDefault();
+        activateTab(tabs[nextIndex]);
+        tabs[nextIndex].focus();
+      });
+    });
+
+    const initialTab =
+      tabs.find((tab) => tab.getAttribute("aria-selected") === "true") ||
+      tabs[0];
+
+    activateTab(initialTab);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initLuaTabs, { once: true });
+  } else {
+    initLuaTabs();
+  }
+
   window.addEventListener("vtx:change", () => {
     syncCounts();
 
